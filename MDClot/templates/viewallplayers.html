@@ -1,0 +1,60 @@
+{%extends "base.html"%}
+{%block body%}
+
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <!--/main-->
+        <div class="col-xs-12 col-sm-12" data-spy="scroll" data-target="#sidebar-nav">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-lg-5">
+                    <div class="panel panel-default">
+                        <a href="/"> Back to Ladder</a>
+                        
+                        <div class="panel-heading">
+                            <h4>Rankings</h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable" id="allPlayersTable">
+                                    <thead>
+                                        <tr>
+                                            <td></td>
+                                            <td colspan="2"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Player</td>
+                                            <td>Rating</td>
+                                        </tr>
+                                    </thead>
+                                    {%for player in container.players_sorted_by_rating  %}
+                                    <tr>
+                                        {% if player.rank is not none %}
+                                        <td>{{ player.rank }}</td>
+                                        {% else %}
+                                        <td>Unranked</td>
+                                        {% endif %}
+                                        <td>
+                                            {% set player_a_clan_name = container.all_players[player.player_id].clan %}
+                                            {% if player_a_clan_name is not none and player_a_clan_name in container.all_clans%}
+                                            {% set player_a_clan = container.all_clans[player_a_clan_name] %}
+                                            <a href="clan?clanId={{player_a_clan.id|escape}}">
+                                                <img src="{{player_a_clan.logo_link|escape}}">
+                                            </a>
+                                            {% endif %}
+                                            <a href="/player?playerId={{player.player_id}}">{{player.player_name|escape}}</a>
+                                        </td>
+                                        <td>{{ player.displayed_rating }}</td>
+                                    </tr>
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
+

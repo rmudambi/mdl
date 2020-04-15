@@ -1,0 +1,500 @@
+{%extends "base.html"%}
+{%block body%}
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="/" class="btn pull-left navbar-brand"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            {% set player_clan_name = container.all_players[player.player_id].clan %}
+            {% if player_clan_name is not none and player_clan_name in container.all_clans%}
+            {% set player_clan = container.all_clans[player_clan_name] %}
+            <a class="navbar-brand" href="clan?clanId={{player_clan.id|escape}}">
+                <img style="margin-top: 3.5px" src="{{player_clan.logo_link|escape}}">
+            </a>
+            {% endif %}
+            <span class="navbar-brand">{{player.player_name|escape}}</span>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if currentPlayer is not none %}
+                <li>
+                    <a style="display:inline-block" href="/player?playerId={{currentPlayer.player_id}}">Logged in as: {{currentPlayer.player_name|escape}}</a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">Personal settings</li>
+                        <li><a href="#" data-toggle="modal" data-target="#vetoedTemplatesModal">Vetoed templates (<span class="numberOfVetoes"></span>)</a></li>
+                        <li><a href="#" data-toggle="modal" data-target="#notableGamesModal">Update notable games</a></li>
+                        <li class="dropdown-submenu pull-left">
+                            <a href="#" tabindex="-1">
+                                Number of games ({{currentPlayer.max_games}})
+                            </a>
+                            <ul class="dropdown-menu">
+                                {%for i in range(2,10) %}
+                                <li {% if i == currentPlayer.max_games %} class="currentMaxGames" {% endif %}>
+                                    <a tabindex="-1"  href="/choice?playerId={{currentPlayer.player_id}}&&numberOfGames={{i}}">{{i}}</a>
+                                </li>
+                                {%endfor%}
+                            </ul>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        {% if currentPlayer.is_joined%}
+                            <li><a href="/leave">Leave Ladder</a></li>
+                        {% else %}
+                            <li><a href="/join">Join Ladder</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% else %}
+                    <li><a href="/login?state=player?playerId={{player.player_id}}">Login</a></li>
+                {% endif %}
+                
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div class="container-fluid main-content">
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-lg-2">
+            <table>
+                <tr>
+                    <td>
+                        Current Rating : {{ player.displayed_rating }}
+                    </td>
+                </tr>
+                {% if player.rank %}
+                <tr>
+                    <td style="padding-left:40">
+                        Current Rank : {{ player.rank }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if player.best_rank %}
+                <tr>
+                    <td>
+                        Best rank : {{ player.best_rank }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if player.best_displayed_rating %}
+                <tr>
+                    <td>
+                        Best rating : {{ player.best_displayed_rating }}
+                    </td>
+                </tr>
+                {% endif %}
+                <tr><td>&nbsp;</td></tr>
+                {% if player.Rating %}
+                <tr>
+                    <td>
+                        Elo Rating : {{ player.Rating| round(2) }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if player.activity_bonus %}
+                <tr>
+                    <td>
+                        Activity Bonus : {{ player.get_capped_activity_bonus()| round(2) }}
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        <a href="http://warlight.net/Profile?p={{player.player_id|escape}}">{{player.player_name|escape}}'s WarLight Profile</a>
+                    </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td>
+                        {% if player.is_joined%}
+                        Playing {{ player.max_games}} games at a time.
+                        {% else %}
+                        Currently not participating in the ladder.
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-lg-5">
+            <div id="playerRating"></div>
+        </div>        
+        <div class="col-xs-12 col-sm-12 col-lg-5">
+            <div id="playerRank"></div>
+        </div>
+    </div>
+    {% if currentPlayer is not none and currentPlayer.player_id == player.player_id %}
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="row">
+                <div class="col-xs-12">
+                    <span>Vetoed templates :</span>
+                    {% for key, value in templates.items() %}
+                    {% if key in current_vetoes %}
+                    <span class="veto-template-list">{{ value }}</span>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-lg-2">
+            {%if players_ranked_nearby is not none and players_ranked_nearby|length > 0%}
+            <div class="panel-default">
+                <div class="panel-heading">
+                    <h4>Ranking</h4>
+                </div>
+                <div class="panel-body latest-games">
+                    <div class="list-group table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>Rank</td>
+                                    <td>Player</td>
+                                    <td>Rating</td>
+                                </tr>
+                            </thead>
+                            {%for rank, nearby_player in players_ranked_nearby %}
+                            <tr {%if player.player_id == nearby_player.player_id %} style="background-color: #808000" {%endif%}>
+                                <td>{{ rank }}</td>
+                                <td>
+                                    {% set nearby_player_clan_name = container.all_players[nearby_player.player_id].clan %}
+                                    {% if nearby_player_clan_name is not none and nearby_player_clan_name in container.all_clans%}
+                                    {% set nearby_player_clan = container.all_clans[nearby_player_clan_name] %}
+                                    <a href="clan?clanId={{nearby_player_clan.id|escape}}">
+                                        <img src="{{nearby_player_clan.logo_link|escape}}">
+                                    </a>
+                                    {% endif %}
+                                    <a href="/player?playerId={{nearby_player.player_id}}">{{nearby_player.player_name|escape}}</a>
+                                </td>
+                                <td>{{ nearby_player.displayed_rating }}</td>
+                            </tr>
+                            {%endfor%}
+                        </table>
+                        <a href="/allplayers" class="pull-right">View all</a>
+                    </div>
+                </div>
+            </div>
+            {%endif%}
+        </div>
+        <div class="col-xs-12 col-sm-8 col-lg-4">
+            <div class="row">
+                <div class="col-xs-1 col-sm-1 col-lg-1"></div>
+                <div class="col-xs-11 col-sm-11 col-lg-11">
+                    <div class="panel panel-default">
+                        <table class="table">
+                            <thead>
+                                <tr class="table-header">
+                                    <td colspan="4"><b>Notable Games</b></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Date</b></td>
+                                    <td><b>Game</b></td>
+                                    <td><b>Player</b></td>
+                                    <td><b>Rating</b></td>
+                                </tr>
+                            </thead>
+                            {% if notable_games is not none and notable_games|length > 0%}
+                            {%for game in notable_games%}
+                            <tr>
+                                <td data-order="{{ game.finish_date[:19] }}">
+                                    <div class="dateString">{{ game.finish_date[:19] }}</div>
+                                </td>
+                                <td>
+                                    {% if game.is_game_deleted%}
+                                    <div id="{{ game.game_id }}"> DELETED </div>
+                                    {% else %}
+                                    <a href="http://warlight.net/MultiPlayer?GameID={{ game.game_id}}">{{ game.game_id }}</a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if game.team_a == player.player_id%}
+                                        {% set opponent_id = game.team_b %}
+                                    {% else %}
+                                        {% set opponent_id = game.team_a %}
+                                    {% endif %}
+                                    {% set opponent = container.all_players[opponent_id] %}
+                                    {% set opponent_clan_name = opponent.clan %}
+                                    {% if opponent_clan_name is not none and opponent_clan_name in container.all_clans%}
+                                    {% set opponent_clan = container.all_clans[opponent_clan_name] %}
+                                    <a href="clan?clanId={{opponent_clan.id|escape}}">
+                                        <img src="{{opponent_clan.logo_link|escape}}">
+                                    </a>
+                                    {% endif %}
+                                    <a href="/player?playerId={{opponent.player_id}}">
+                                        {{opponent.player_name|escape}}
+                                    </a> 
+                                </td>
+                                <td>{{opponent.displayed_rating|escape}}</td>
+                            </tr>
+                            {%endfor%}
+                            {% else %}
+                            <tr>
+                                <td colspan="4"> No notable games selected. Players can set up to 5 notable games via the Settings menu.</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+                </div>
+            <div class="row">
+                {% if player.player_id == currentPlayer.player_id %}
+                <div class="winRatePlotNavigation">
+                    <div class="navigation-container">
+                        <label><input type="checkbox" name="showBlacklisted" />Show Vetoed</label>
+                        <label class="btn btn-default btn-xs winrate-descending selected"><input class="hidden" type="radio" checked name="winRateSort" value="descending" />Best</label>
+                        <label class="btn btn-default btn-xs winrate-ascending"><input class="hidden" type="radio" name="winRateSort" value="ascending" />Worst</label>
+                    </div>
+                </div>
+                {% endif %}
+                <div id="templateWinrates"></div>
+            </div>
+        </div>
+		<div class="col-xs-12 col-sm-12 col-lg-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<ul class="pagination pagination-lg pager pull-right"></ul>
+					<h4>Latest Games</h4>
+				</div>
+				<div class="panel-body latest-games">
+					<div>
+						<table class="table table-bordered dataTable" id="profileGamesTable">
+							<thead>
+                                <tr>
+                                    <td><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                </tr>
+								<tr>
+									<td><b>Game</b></td>
+									<td><b>Link</b></td>
+									<td><b>Template</b></td>
+									<td><b>Date</b></td>
+									<td><b>Rating</b></td>
+								</tr>
+							</thead>
+							<tbody>
+								{%for game in games%}
+								{%if game.winner is none%}
+								<tr>
+									<td>
+										{% set player_a_clan_name = container.all_players[game.team_a].clan %}
+										{% if player_a_clan_name is not none and player_a_clan_name in container.all_clans%}
+											{% set player_a_clan = container.all_clans[player_a_clan_name] %}
+											<a href="clan?clanId={{player_a_clan.id|escape}}">
+												<img src="{{player_a_clan.logo_link|escape}}">
+											</a>
+										{% endif %}
+										<a href="/player?playerId={{container.all_players[game.team_a].player_id}}">
+											{{container.all_players[game.team_a].player_name|escape}}
+										</a> 
+
+										<span> vs </span>
+
+										{% set player_b_clan_name = container.all_players[game.team_b].clan %}
+										{% if player_b_clan_name is not none and player_b_clan_name in container.all_clans%}
+											{% set player_b_clan = container.all_clans[player_b_clan_name] %}
+											<a href="clan?clanId={{player_b_clan.id|escape}}">
+												<img src="{{player_b_clan.logo_link|escape}}">
+											</a>
+										{% endif %}
+										<a href="/player?playerId={{container.all_players[game.team_b].player_id}}">
+											{{container.all_players[game.team_b].player_name|escape}}
+										</a>
+									</td>
+									<td>
+										{% if game.is_game_deleted%}
+										<div id="{{ game.game_id }}"> DELETED </div>
+										{% else %}
+										<a href="http://warlight.net/MultiPlayer?GameID={{ game.game_id}}">{{ game.game_id }}</a>
+										{% endif %}
+									</td>
+									<td>
+										{% set template_id = game.template|int%}
+										{% if template_id in templates%}
+                                        <a href="template?templateId={{ template_id }}">{{ templates[template_id] }}</a>
+                                        {% else %}
+                                        <a href="template?templateId={{ template_id }}">{{ retired_templates[template_id] }}</a>
+										{% endif %}
+									</td>
+									<!-- Set data-order timestamp for ongoing games for ordering games by date -->
+									<td data-order="9999999999999"></td>
+									<td>
+										<div>
+											{% if game.team_a == player.player_id%}
+											{% set opponent = game.team_b %}
+											{% else %}
+											{% set opponent = game.team_a %}
+											{% endif %}
+											{{container.all_players[opponent].displayed_rating}}
+										</div>
+									</td>
+								</tr>
+								{%endif%}
+								{%endfor%}
+								{%for game in games%}
+								{%if game.winner is not none%}
+								<tr {%if player.player_id==game.winner %} style="background-color: #053805" {% else %} style="background-color: #300" {%endif%}>
+									<td>
+										{% if game.team_a == game.winner%}
+										{% set loser = game.team_b %}
+										{% else %}
+										{% set loser = game.team_a %}
+										{% endif %}
+
+										{% set player_a_clan_name = container.all_players[game.winner].clan %}
+										{% if player_a_clan_name is not none and player_a_clan_name in container.all_clans%}
+											{% set player_a_clan = container.all_clans[player_a_clan_name] %}
+											<a href="clan?clanId={{player_a_clan.id|escape}}">
+												<img src="{{player_a_clan.logo_link|escape}}">
+											</a>
+										{% endif %}
+										<a href="/player?playerId={{game.winner}}">
+											{{container.all_players[game.winner].player_name|escape}}
+										</a> 
+
+										<span> defeated </span> 
+
+										{% set player_b_clan_name = container.all_players[loser].clan %}
+										{% if player_b_clan_name is not none and player_b_clan_name in container.all_clans%}
+										{% set player_b_clan = container.all_clans[player_b_clan_name] %}
+										<a href="clan?clanId={{player_b_clan.id|escape}}">
+											<img src="{{player_b_clan.logo_link|escape}}">
+										</a>
+										{% endif %}
+										<a href="/player?playerId={{loser}}">
+											{{container.all_players[loser].player_name|escape}}
+										</a>
+									</td>
+									<td>
+										{% if game.is_game_deleted%}
+										<div id="{{ game.game_id }}"> DELETED </div>
+										{% else %}
+										<a href="http://warlight.net/MultiPlayer?GameID={{ game.game_id}}">{{ game.game_id }}</a>
+										{% endif %}
+									</td>
+									<td>
+										{% set template_id = game.template|int%}
+										{% if template_id in templates%}
+                                        <a href="template?templateId={{ template_id }}">{{ templates[template_id] }}</a>
+                                        {% else %}
+                                        <a href="template?templateId={{ template_id }}">{{ retired_templates[template_id] }}</a>
+										{% endif %}
+									</td>
+									<td data-order="{{ game.finish_date[:19] }}">
+										<div class="dateTimeString">{{ game.finish_date[:19] }}</div>
+									</td>
+									<td>
+										<div>
+											{% if game.team_a == player.player_id%}
+											{% set opponent = game.team_b %}
+											{% else %}
+											{% set opponent = game.team_a %}
+											{% endif %}
+											{{container.all_players[opponent].displayed_rating}}
+										</div>
+									</td>
+								</tr>
+								{%endif%}
+								{%endfor%}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!--/panel-body-->
+			</div>
+			<!--/panel-->
+		</div>
+    </div>
+</div>
+<script>
+                var plotPoints = [{%for h in history%} ["{{h.recorded_date}}","{{h.rank}}","{{h.rating}}"],{%endfor%}]
+                var template_winrates = {{template_winrates|tojson }}
+
+                {% if player.player_id == currentPlayer.player_id %}
+                var blacklisted_templates = {{current_vetoes|tojson }}
+                {% else %}
+                var blacklisted_templates = []
+                {% endif %}
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/profilePlots.js') }}"></script>
+
+<!-- Vetoed templates modal -->
+<div id="vetoedTemplatesModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Veto up to 7 templates</h4>
+            </div>
+            <div class="modal-body">
+                <div class="vetoes-container">
+                    {% for key, value in templates.items() %}
+                    <div class="vetoItem veto-checkboxes">
+                        <label for="{{ key }}">
+                            {% if key in current_vetoes %}
+                            <input type="checkbox" name="vetoes" id="{{ key }}" value="{{ key }}" checked>
+                            {% else %}
+                            <input type="checkbox" name="vetoes" id="{{ key }}" value="{{ key }}">
+                            {% endif %}
+                            <span>{{ value }}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="saveVetoedTemplates" class="btn btn-success" data-toggle="tooltip">Save</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Notable Games modal-->
+<div id="notableGamesModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Update notable games</h4>
+            </div>
+            <div class="modal-body">
+                <div class="notable-games-container">
+                    {%for k in range(0, 5)%}
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-lg-4 col-form-label">Game {{k + 1}} :</label>
+                        <div class="col-lg-8">
+                            {% if k < current_player_notable_games|length %}
+                            <input class="form-control notable-game" type="text" value="{{ current_player_notable_games[k].game_id }}">
+                            {% else %}
+                            <input class="form-control notable-game" type="text" value="">
+                            {% endif %}
+                        </div>
+                    </div>
+                    {%endfor%}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="saveNotableGames" class="btn btn-success" data-toggle="tooltip">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
+

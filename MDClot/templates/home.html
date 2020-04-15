@@ -1,0 +1,340 @@
+{%extends "base.html"%} 
+{%block body%} 
+{% if currentPlayer is not none %}
+    <div class="col-xs-12 col-sm-6 col-lg-3">
+        <div class="panel panel-default">
+            <table>
+                <tr>
+                    <td style="padding-left:40">
+                        <a href="/player?playerId={{currentPlayer.player_id}}">{{currentPlayer.player_name|escape}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left:40">
+                        Current Rating : {{ currentPlayer.displayed_rating }}
+                    </td>
+                </tr>
+                {% if currentPlayer.rank %}
+                <tr>
+                    <td style="padding-left:40">
+                        Current Rank : {{ currentPlayer.rank }}
+                    </td>
+                </tr>
+                {% endif %} 
+                {% if currentPlayer.best_rank %}
+                <tr>
+                    <td style="padding-left:40">
+                        Best rank ever achieved : {{ currentPlayer.best_rank }}
+                    </td>
+                </tr>
+                {% endif %} 
+                {% if currentPlayer.best_displayed_rating %}
+                <tr>
+                    <td style="padding-left:40">
+                        Best rating ever achieved : {{ currentPlayer.best_displayed_rating }}
+                    </td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+    {% if currentPlayer.is_joined%}
+    <a href="/leave" class="btn btn-danger pull-right">Leave Ladder</a>
+    <table class="pull-right border">
+        <tr>
+            <td> Choose number of games</td>
+            <td style="padding-left:10px; padding-right:30px">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                        {{currentPlayer.max_games}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                        {%for i in range(2,10) %}
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="/choice?playerId={{currentPlayer.player_id}}&&numberOfGames={{i}}">{{i}}</a>
+                        </li>
+                        {%endfor%}
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </table>
+    {% else %}
+    <a href="/join" class="btn btn-success pull-right">Join Ladder</a> 
+    {% endif %} 
+{% else %}
+<a href="/login?state=home" class="btn btn-success pull-right">Login</a> 
+{% endif %}
+
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-12 col-sm-12" data-spy="scroll" data-target="#sidebar-nav">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-lg-3" style="padding-right:0px;">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>Top Ranked Players</h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div class="list-group table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Player</td>
+                                            <td>Rating</td>
+                                        </tr>
+                                    </thead>
+                                    {%for player in container.players_sorted_by_rating[:10] %}
+                                    <tr {%if player.player_id == currentPlayer.player_id %} style="background-color: #808000" {%endif%}>
+                                        {% if player.rank is not none %}
+                                        <td>{{ player.rank }}</td>
+                                        {% else %}
+                                        <td>Unranked</td>
+                                        {% endif %}
+                                        <td>
+                                            {% set player_clan_name = container.all_players[player.player_id].clan %} 
+                                            {% if player_clan_name is not none and player_clan_name in container.all_clans%} 
+                                            {% set player_clan = container.all_clans[player_clan_name] %}
+                                            <a href="clan?clanId={{player_clan.id|escape}}">
+                                                <img src="{{player_clan.logo_link|escape}}">
+                                            </a>
+                                            {% endif %}
+                                            <a href="/player?playerId={{player.player_id}}">{{player.player_name|escape}}</a>
+                                        </td>
+                                        <td>{{ player.displayed_rating }}</td>
+                                    </tr>
+                                    {%endfor%}
+                                </table>
+                                {% if container.joined_players|length == 0 %} 
+                                {% set player_count = 0%} 
+                                {% else %} 
+                                {% set player_count = container.joined_players|length%} 
+                                {% endif %} 
+                                <span>
+                                    Currently Active players : {{player_count}} <a href="/allplayers" class="pull-right">View all</a>
+                                </span>
+                                <br/>
+                                <span>Total games on MDL : {{container.total_game_count|escape}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <table>
+                            <tr>
+                                <td style="padding:5px; padding-left:20px">
+                                    <a href="/report"> Weekly Report</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel panel-default">
+                        <table>
+                            <tr>
+                                <td style="padding:5px; padding-left:20px">
+                                    <a href="/leaderboard"> Leaderboard</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel panel-default">
+                        <table>
+                            <tr>
+                                <td style="padding:5px; padding-left:20px">
+                                    <a href="/clanleaderboard"> Clan Leaderboard</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel panel-default">
+                        <table>
+                            <tr>
+                                <td style="padding:5px; padding-left:20px">
+                                    <a href="/mdlstats"> MDL Statistics</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-5" style="padding-right:0px;">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>Latest Games</h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <td><b>Game</b></td>
+                                            <td><b>Link</b></td>
+                                            <td><b>Date Ended</b></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {%for game in container.finished_games%}
+                                        <tr>
+                                            <td>
+                                                {% if game.team_a == game.winner%} 
+                                                {% set loser = game.team_b %} 
+                                                {% else %} 
+                                                {% set loser = game.team_a %} 
+                                                {% endif %} 
+                                                {% set player_a_clan_name = container.all_players[game.winner].clan %} 
+                                                {% if player_a_clan_name is not none and player_a_clan_name in container.all_clans%} 
+                                                {% set player_a_clan = container.all_clans[player_a_clan_name] %}
+                                                <a href="clan?clanId={{player_a_clan.id|escape}}">
+                                                    <img src="{{player_a_clan.logo_link|escape}}">
+                                                </a>
+                                                {% endif %}
+                                                <a href="/player?playerId={{container.all_players[game.winner].player_id}}">
+                                                    {{container.all_players[game.winner].player_name|escape}}
+                                                </a>
+
+                                                <span> defeated </span> 
+                                                {% set player_b_clan_name = container.all_players[loser].clan %} 
+                                                {% if player_b_clan_name is not none and player_b_clan_name in container.all_clans%} 
+                                                {% set player_b_clan = container.all_clans[player_b_clan_name] %}
+                                                <a href="clan?clanId={{player_b_clan.id|escape}}">
+                                                    <img src="{{player_b_clan.logo_link|escape}}">
+                                                </a>
+                                                {% endif %}
+                                                <a href="/player?playerId={{container.all_players[loser].player_id}}">
+                                                    {{container.all_players[loser].player_name|escape}}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {% if game.is_game_deleted%}
+                                                <div id="{{ game.game_id }}"> DELETED </div>
+                                                {% else %}
+                                                <a href="http://warlight.net/MultiPlayer?GameID={{ game.game_id}}">{{ game.game_id }}</a> 
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="dateTimeString">{{ game.finish_date[:19] }}</div>
+                                            </td>
+                                        </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Templates and FAQs -->
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>FAQs</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div id="content">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="active">
+                                        <a data-target="#intro" data-toggle="tab">MDL</a>
+                                    </li>
+                                    <li>
+                                        <a data-target="#about" data-toggle="tab">About</a>
+                                    </li>
+                                    <li>
+                                        <a data-target="#gameallocation" data-toggle="tab">Allocation</a>
+                                    </li>
+                                    <li>
+                                        <a data-target="#ranking" data-toggle="tab">Ranking</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="intro">
+                                        <br />
+                                        <iframe class="col-xs-12 col-sm-12 col-lg-12" height="315" src="https://www.youtube.com/embed/1EAWWs78sYI" frameborder="0" allowfullscreen></iframe>
+                                    </div>
+                                    <div class="tab-pane" id="about">
+                                        <br />
+                                        <b>What is this all about?</b>
+                                        <p>This is a custom multi-day ladder based on {{templates|length}} templates. All games honor vacations and have a 3 day auto-boot. It checks results and allocates new games every two hours.</p>
+                                        <br />
+                                        <p>If you notice errors on any template or find bugs on the site, please contact <a href="https://www.warlight.net/Profile?p=2428496679">Master of the Dead</a></p>
+                                    </div>
+                                    <div class="tab-pane" id="gameallocation">
+                                        <br />
+                                        <b>How are games allocated?</b>
+                                        <p>Games are allocated amongst players currently joined on the ladder. The ladder tries to pair similar players together.</p>
+                                        <br />
+                                        <b>How frequently are games scheduled?</b>
+                                        <p>Games are scheduled every 2 hours.</p>
+                                        <br />
+                                        <b>How is my next opponent determined?</b>
+                                        <p>From the list of players currently active on the ladder, you may be randomly assigned an opponent within a range of R-20 to R+20. Players are ordered on Elo rating.</p>
+                                        <br />
+                                        <b>How often can I play the same opponent?</b>
+                                        <p>Two players can play against each other once in 7 days.</p>
+                                        <br />
+                                    </div>
+                                    <div class="tab-pane" id="ranking">
+                                        <br />
+                                        <b>How are players ranked?</b>
+                                        <p>Players are ranked on this ladder using the Elo Rating algorithm. A detailed explanation can be found <a href="https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/">here</a>.</p>
+                                        <br />
+                                        <b>How many games does a player need to stay ranked?</b>
+                                        <p>All players with 20 or more games in the last 5 months will be ranked on the ladder.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Templates Used</h4>
+                        </div>
+                        <div class="panel-body">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <ul>
+                                            {% for template in sorted_template_list %}
+                                            {% if loop.index == sorted_template_list|length //2 + 1 %}
+                                            </ul>
+                                            </td>
+                                            <td>
+                                            <ul>
+                                            {% endif%}
+                                            <li><a href="/template?templateId={{template}}">{{templates[template]}}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Retired Templates</h4>
+                        </div>
+                        <div class="panel-body">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <ul>
+                                            {% for template in retired_template_list %}
+                                            {% if loop.index == retired_template_list|length //2 + 1 %}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            {% endif%}
+                                            <li><a href="/template?templateId={{template}}">{{retired_templates[template]}}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

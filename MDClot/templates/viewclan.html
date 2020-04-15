@@ -1,0 +1,183 @@
+﻿{%extends "base.html"%}
+{%block body%}
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="/" class="btn pull-left navbar-brand"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            {% if clan is not none%}
+            <a class="navbar-brand" href="http://warlight.net/Clans/?ID={{clan.id|escape}}">
+                <img style="margin-top: 3.5px" src="{{clan.logo_link|escape}}">
+            </a>
+            {% endif %}
+            <span class="navbar-brand">{{clan.name|escape}}</span>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid main-content">
+    <div class="col-xs-12 col-sm-12 col-lg-12" data-spy="scroll" data-target="#sidebar-nav">
+        <div class="row">
+            <div class="col-xs-12 col-sm-4 col-lg-4">
+                <table class="table table-condensed">
+                    {%for metric in clan_metrics%}
+                    <tr>
+                        <td>
+                            {{metric[0]}}
+                        </td>
+                        <td>
+                            {%if metric[0] == "Win Rate" %}
+                            {{metric[1]|float|round(2)}}
+                            {%else%}
+                            {{metric[1]|int}}
+                            {%endif%}
+                            {%if metric[0] == "First Rank on MDL" or metric[0] == "Top 5 Rank on MDL" or metric[0] == "Top 10 Rank on MDL"%}
+                            {% if metric[1]|int == 1 %}
+                              player
+                            {%else%}
+                              players
+                            {%endif%}
+                            {%endif%}
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </table>
+            </div>
+            <div class="col-xs-12 col-sm-8 col-lg-8">
+                {% if currentPlayer is not none and (clan.name == currentPlayer.clan or currentPlayer.player_id == 2428496679) %}
+                <div class="winRatePlotNavigation">
+                    <div class="navigation-container">
+                        <label class="btn btn-default btn-xs winrate-descending selected"><input class="hidden" type="radio" checked name="winRateSort" value="descending" />Best</label>
+                        <label class="btn btn-default btn-xs winrate-ascending"><input class="hidden" type="radio" name="winRateSort" value="ascending" />Worst</label>
+                    </div>
+                </div>
+                {% endif %}
+                <div id="templateWinrates"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="stats-table col-xs-6 col-sm-6 col-lg-3">
+                <div class="panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            Players
+                            <span class="glyphicon glyphicon-info-sign pull-right clan_players"></span>
+                        </h4>
+                    </div>
+                    <div class="panel-body latest-games">
+                        <div>
+                            <table class="table table-bordered dataTable leaderboardTable">
+                                <thead>
+                                    <tr>
+                                        <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rank</td>
+                                        <td>Player</td>
+                                        <td>Rating</td>
+                                    </tr>
+                                </thead>
+                                {%for player in container.players_sorted_by_rating  %}
+                                {%if player.clan == clan.name%}
+                                <tr>
+                                    {% if player.rank is not none %}
+                                    <td>{{ player.rank }}</td>
+                                    {% else %}
+                                    <td>Unranked</td>
+                                    {% endif %}
+                                    <td>
+                                        {% set player_a_clan_name = container.all_players[player.player_id].clan %}
+                                        {% if player_a_clan_name is not none and player_a_clan_name in container.all_clans%}
+                                        {% set player_a_clan = container.all_clans[player_a_clan_name] %}
+                                        <a href="clan?clanId={{player_a_clan.id|escape}}">
+                                            <img src="{{player_a_clan.logo_link|escape}}">
+                                        </a>
+                                        {% endif %}
+                                        <a href="/player?playerId={{player.player_id}}">{{player.player_name|escape}}</a>
+                                    </td>
+                                    <td>{{ player.displayed_rating }}</td>
+                                </tr>
+                                {%endif%}
+                                {%endfor%}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% set table_index = 1 %}
+            {%for metric_leaderboard in leaderboard.metric_leaderboards%}
+            <div class="stats-table col-xs-6 col-sm-6 col-lg-3">
+                <div class="panel-default">
+                    <div class="panel-heading">
+                        <h4>
+                            {{metric_leaderboard.metric_name}}
+                            <span class="glyphicon glyphicon-info-sign pull-right most_games_played"></span>
+                        </h4>
+                    </div>
+                    <div class="panel-body latest-games">
+                        <div>
+                            <table class="table table-bordered dataTable leaderboardTable">
+                                <thead>
+                                    <tr>
+                                        <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rank</td>
+                                        <td>Player</td>
+                                        <td>{{metric_leaderboard.metric_unit}}</td>
+                                    </tr>
+                                </thead>
+                                {%for player_tuple in metric_leaderboard.player_tuples %}
+                                {%if player_tuple|length == 2%}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        {% set player = container.all_players[player_tuple[0]] %}
+                                        {% set player_clan_name = player.clan %}
+                                        {% if player_clan_name is not none and player_clan_name in container.all_clans%}
+                                        {% set player_clan = container.all_clans[player_clan_name] %}
+                                        <a href="clan?clanId={{player_clan.id|escape}}">
+                                            <img src="{{player_clan.logo_link|escape}}">
+                                        </a>
+                                        {% endif %}
+                                        <a href="/player?playerId={{player.player_id}}">{{player.player_name|escape}}</a>
+                                    </td>
+                                    <td>
+                                        {% if metric_leaderboard.metric_unit == '%' %}
+                                        {{'%0.2f'| format(player_tuple[1]|float)}}%
+                                        {% else %}
+                                        {{player_tuple[1]|int}}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {%endif%}
+                                {%endfor%}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {%if (table_index % 4) == 3 %}
+        </div>
+        <div class="row">
+            {%endif%}
+            {% set table_index = table_index + 1 %}
+            {%endfor%}
+        </div>
+    </div>
+</div>
+<script>
+    var template_winrates = [{%for t in template_winrates%} {name:"{{t.name}}", winrate:"{{t.winrate}}", totalGames:"{{t.totalGames}}"}, {%endfor%}]
+</script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/clanProfilePlots.js') }}"></script>
+
+
+{%endblock%}
+

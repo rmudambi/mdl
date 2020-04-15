@@ -1,0 +1,505 @@
+﻿{%extends "base.html"%}
+{%block body%}
+
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <!--/main-->
+        <a href="/"> Back to Ladder</a>
+        <div class="col-xs-12 col-sm-12 col-lg-12" data-spy="scroll" data-target="#sidebar-nav">
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                Active Players
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Count</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.active_players  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {%set clan_name = clan_tuple[0] %}
+                                    {%if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {%endif%}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                Most Games Played
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Count</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.games_played  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {%set clan_name = clan_tuple[0] %}
+                                    {%if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {%endif%}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                Most Wins
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Count</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.wins  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {% set clan_name = clan_tuple[0] %}
+                                    {% if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                Best Win Rate
+                                <span class="glyphicon glyphicon-info-sign pull-right clan_win_rate"></span>
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>%</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.win_rate  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {% set clan_name = clan_tuple[0] %}
+                                    {% if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{'%0.2f'| format(clan_tuple[1]|float)}}%
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                All-time Highest Rating
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Rating</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.all_time_highest_rating  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {%set clan_name = clan_tuple[0] %}
+                                    {%if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {%endif%}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                All-time Highest Rank
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Rank</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.all_time_highest_rank  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {%set clan_name = clan_tuple[0] %}
+                                    {%if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {%endif%}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                Active Highest Rating
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Rating</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.current_highest_rating %}
+                                    {%if clan_tuple|length == 2%}
+                                    {% set clan_name = clan_tuple[0] %}
+                                    {% if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                Average Rating
+                                <span class="glyphicon glyphicon-info-sign pull-right clan_win_rate"></span>
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Rating</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.current_average_rating  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {% set clan_name = clan_tuple[0] %}
+                                    {% if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{ clan_tuple[1]|int }}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                First Rank on MDL
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Player Count</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.top1  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {%set clan_name = clan_tuple[0] %}
+                                    {%if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {%endif%}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                Top 5 Rank on MDL
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Player Count</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.top5  %}
+                                    {%if clan_tuple|length == 2%}
+                                    {%set clan_name = clan_tuple[0] %}
+                                    {%if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}">  {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {%endif%}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                Top 10 Rank on MDL
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Clan</td>
+                                            <td>Player Count</td>
+                                        </tr>
+                                    </thead>
+                                    {%for clan_tuple in clan_leaderboard.top10 %}
+                                    {%if clan_tuple|length == 2%}
+                                    {% set clan_name = clan_tuple[0] %}
+                                    {% if clan_name is not none and clan_name in container.all_clans%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set clan = container.all_clans[clan_name] %}
+                                            <a href="clan?clanId={{clan.id|escape}}">
+                                                <img src="{{clan.logo_link|escape}}"> {{clan_name}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{clan_tuple[1]|int}}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
+

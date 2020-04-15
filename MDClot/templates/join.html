@@ -1,0 +1,11 @@
+{%extends "base.html"%}
+{%block body%}
+
+<h1>Join</h1>
+
+You have successfully joined the <a href="/">ladder</a>. 
+
+<p>You will receive games from a pool of 47 templates. You can veto up to 7 templates if you do not like some of them.</p>
+<p>You have currently signed up for {{current_player.max_games}} games at a time. You can alter this to a number of your choice(2-9).</p>
+<meta http-equiv="refresh" content="10;url=/" />
+{%endblock%}

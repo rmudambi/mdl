@@ -1,0 +1,105 @@
+{%extends "base.html"%}
+{%block body%}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-lg-4">
+            <table>
+                <tr>
+                    <td>
+                        <a href="/"> Back to Ladder</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-lg-7">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <ul class="pagination pagination-lg pager pull-right"></ul>
+                    <h4>Latest Games on <a href="https://www.warlight.net/MultiPlayer?TemplateID={{template_id}}">{{template_name}}</a></h4>
+                </div>
+                <div class="panel-body latest-games">
+                    <div>
+                        <table class="table table-bordered dataTable" id="profileTemplateGamesTable">
+                            <thead>
+                                <tr>
+                                    <td><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Game</b></td>
+                                    <td><b>Link</b></td>
+                                    <td><b>Date</b></td>
+                                    <td><b>Ratings</b></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for game in games%}
+                                {%if game.winner is not none%}
+                                <tr>
+                                    <td>
+                                        {% if game.team_a == game.winner%}
+                                        {% set loser = game.team_b %}
+                                        {% else %}
+                                        {% set loser = game.team_a %}
+                                        {% endif %}
+
+                                        {% set player_a_clan_name = container.all_players[game.winner].clan %}
+                                        {% if player_a_clan_name is not none and player_a_clan_name in container.all_clans%}
+                                        {% set player_a_clan = container.all_clans[player_a_clan_name] %}
+                                        <a href="clan?clanId={{player_a_clan.id|escape}}">
+                                            <img src="{{player_a_clan.logo_link|escape}}">
+                                        </a>
+                                        {% endif %}
+                                        <a href="/player?playerId={{game.winner}}">
+                                            {{container.all_players[game.winner].player_name|escape}}
+                                        </a>
+
+                                        <span> defeated </span>
+
+                                        {% set player_b_clan_name = container.all_players[loser].clan %}
+                                        {% if player_b_clan_name is not none and player_b_clan_name in container.all_clans%}
+                                        {% set player_b_clan = container.all_clans[player_b_clan_name] %}
+                                        <a href="clan?clanId={{player_b_clan.id|escape}}">
+                                            <img src="{{player_b_clan.logo_link|escape}}">
+                                        </a>
+                                        {% endif %}
+                                        <a href="/player?playerId={{loser}}">
+                                            {{container.all_players[loser].player_name|escape}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if game.is_game_deleted%}
+                                        <div id="{{ game.game_id }}"> DELETED </div>
+                                        {% else %}
+                                        <a href="http://warlight.net/MultiPlayer?GameID={{ game.game_id}}">{{ game.game_id }}</a>
+                                        {% endif %}
+                                    </td>
+                                    <td data-order="{{ game.finish_date[:19] }}">
+                                        <div class="dateTimeString">{{ game.finish_date[:19] }}</div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{container.all_players[game.team_a].displayed_rating}} vs {{container.all_players[game.team_b].displayed_rating}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {%endif%}
+                                {%endfor%}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--/panel-body-->
+            </div>
+            <!--/panel-->
+        </div>
+        {% if template_protip != "" %}
+        <div class="col-xs-12 col-sm-6 col-lg-4">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ template_protip }}" frameborder="0" allowfullscreen></iframe>
+        </div>
+        {%endif%}
+    </div>
+</div>
+{%endblock%}

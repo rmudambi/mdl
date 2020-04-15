@@ -1,0 +1,74 @@
+﻿{%extends "base.html"%}
+{%block body%}
+
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <!--/main-->
+        <a href="/"> Back to Ladder</a>
+        <div class="col-xs-12 col-sm-12 col-lg-12" data-spy="scroll" data-target="#sidebar-nav">
+            <div class="row">
+                {% set table_index = 0 %}
+                {%for metric_leaderboard in leaderboard.metric_leaderboards%}
+                <div class="stats-table col-xs-6 col-sm-6 col-lg-3">
+                    <div class="panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                {{metric_leaderboard.metric_name}}
+                                <span class="glyphicon glyphicon-info-sign pull-right most_games_played"></span>
+                            </h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable leaderboardTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rank</td>
+                                            <td>Player</td>
+                                            <td>{{metric_leaderboard.metric_unit}}</td>
+                                        </tr>
+                                    </thead>
+                                    {%for player_tuple in metric_leaderboard.player_tuples%}
+                                    {%if player_tuple|length == 2%}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            {% set player = container.all_players[player_tuple[0]] %}
+                                            {% set player_clan_name = player.clan %}
+                                            {% if player_clan_name is not none and player_clan_name in container.all_clans%}
+                                            {% set player_clan = container.all_clans[player_clan_name] %}
+                                            <a href="clan?clanId={{player_clan.id|escape}}">
+                                                <img src="{{player_clan.logo_link|escape}}">
+                                            </a>
+                                            {% endif %}
+                                            <a href="/player?playerId={{player.player_id}}">{{player.player_name|escape}}</a>
+                                        </td>
+                                        <td>
+                                            {% if metric_leaderboard.metric_unit == '%' %}
+                                            {{'%0.2f'| format(player_tuple[1]|float)}}%
+                                            {% else %}
+                                            {{player_tuple[1]|int}}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {%if (table_index % 4) == 3 %}
+            </div>
+            <div class="row">
+                {%endif%}
+                {% set table_index = table_index + 1 %}
+                {%endfor%}
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
+

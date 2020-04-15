@@ -1,0 +1,73 @@
+﻿{%extends "base.html"%}
+{%block body%}
+
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <!--/main-->
+        <div class="col-xs-12 col-sm-12" data-spy="scroll" data-target="#sidebar-nav">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-lg-8">
+                    <div class="panel panel-default">
+                        <a href="/"> Back to Ladder</a>
+                        <div class="panel-heading">
+                            <h4>Report</h4>
+                        </div>
+                        <div class="panel-body latest-games">
+                            <div>
+                                <table class="table table-bordered dataTable" id="reportTable">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="6"></td>
+                                            <td colspan="3"><input type="text" class="search-query form-control table_search" placeholder="Search" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Player</td>
+                                            <td>Current Rank</td>
+                                            <td>Previous Rank</td>
+                                            <td>Rank Change</td>
+                                            <td>Current Rating</td>
+                                            <td>Previous Rating</td>
+                                            <td>Rating Change</td>
+                                            <td>Wins</td>
+                                            <td>Losses</td>
+                                        </tr>
+                                    </thead>
+                                    {%for player_tuple in players  %}
+                                    {%if player_tuple|length == 11%}
+                                    <tr>
+                                        <td>
+                                            {% set player_clan_name = player_tuple[0] %}
+                                            {% if player_clan_name is not none and player_clan_name in container.all_clans%}
+                                            {% set player_clan = container.all_clans[player_clan_name] %}
+                                            <a href="clan?clanId={{player_clan.id|escape}}">
+                                                <img src="{{player_clan.logo_link|escape}}">
+                                            </a>
+                                            {% endif %}
+                                            <a href="/player?playerId={{player_tuple[1]}}">{{player_tuple[2]|escape}}</a>
+                                        </td>
+                                        {%for ele in player_tuple  %}
+                                        {% if loop.index > 3 %}
+                                        <td>
+                                        {% if ele is not none %}
+                                        {{ ele }}
+                                        {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        {%endfor%}
+                                    </tr>
+                                    {%endif%}
+                                    {%endfor%}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-lg-4">
+                    This table is updated at the beginning of every day. It shows the change in rank/rating over the last week.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
+
