@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, session, request, redirect
 from jinja2 import TemplateNotFound
+from entities.Clan import Clan
 from utilities.StatQueries import *
 from metricleaderboard import game_count, percentage, wins, days
 from lot import LOTContainer
