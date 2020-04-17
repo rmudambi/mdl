@@ -19,9 +19,11 @@ mdl_stat_finished_games_per_day = "Finished Games Per Day"
 def update_mdl_stats(conn):
     fin_date = datetime.now()
     cursor = conn.cursor()
-    cursor.execute("""SELECT datetime((strftime('%s', f1.FinishDate) / 24/3600 + 1) * 3600 *24, 'unixepoch') as cTime1, count(*) AS gc
-            FROM Games f1 
-            WHERE cTime1 < ?""", (fin_date,))
+    cursor.execute(
+        """SELECT datetime((strftime('%s', f1.FinishDate) / 24/3600 + 1) * 3600 *24, 'unixepoch')
+            as cTime1, count(*) AS gc
+        FROM Games f1 
+        WHERE cTime1 < ?""", (fin_date,))
 
     tg_tuples = cursor.fetchall()
     tuple_update_time = datetime.strptime(tg_tuples[0][0], '%Y-%m-%d %H:%M:%S')
@@ -185,21 +187,31 @@ def find_total_days_ranked(conn, rank: int = None) -> List[Tuple[int, int]]:
 
 def find_longest_win_streak(conn):
     cursor = conn.cursor()    
-    games_won_query = """SELECT TeamA, group_concat(ids)  FROM (SELECT TeamA, group_concat(GameId || "_" || FinishDate) as ids FROM Games 
-                           WHERE Winner = TeamA AND FinishDate IS NOT NULL 
-                           GROUP BY TeamA 
-                           UNION ALL
-                           SELECT TeamB, group_concat(GameId || "_" || FinishDate) as ids FROM Games 
-                           WHERE Winner = TeamB AND FinishDate IS NOT NULL
-                           GROUP BY TeamB) GROUP BY TeamA"""
+    games_won_query = """
+        SELECT TeamA, group_concat(ids)  FROM (
+            SELECT TeamA, group_concat(GameId || "_" || FinishDate) as ids
+            FROM Games 
+            WHERE Winner = TeamA AND FinishDate IS NOT NULL 
+            GROUP BY TeamA 
+            UNION ALL
+            SELECT TeamB, group_concat(GameId || "_" || FinishDate) as ids
+            FROM Games 
+            WHERE Winner = TeamB AND FinishDate IS NOT NULL
+            GROUP BY TeamB)
+        GROUP BY TeamA
+    """
 
-    all_games_query = """SELECT TeamA, group_concat(ids)  FROM (SELECT TeamA, group_concat(GameId || "_" || FinishDate) as ids FROM Games 
-                           WHERE FinishDate IS NOT NULL 
-                           GROUP BY TeamA 
-                           UNION ALL
-                           SELECT TeamB, group_concat(GameId || "_" || FinishDate) as ids FROM Games 
-                           WHERE FinishDate IS NOT NULL
-                           GROUP BY TeamB) GROUP BY TeamA"""
+    all_games_query = """
+        SELECT TeamA, group_concat(ids)  FROM (
+            SELECT TeamA, group_concat(GameId || "_" || FinishDate) as ids FROM Games 
+            WHERE FinishDate IS NOT NULL 
+            GROUP BY TeamA 
+            UNION ALL
+            SELECT TeamB, group_concat(GameId || "_" || FinishDate) as ids FROM Games 
+            WHERE FinishDate IS NOT NULL
+            GROUP BY TeamB)
+        GROUP BY TeamA
+    """
     
     cursor.execute(games_won_query)
     player_won_games_tuples = cursor.fetchall()
