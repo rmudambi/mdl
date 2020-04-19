@@ -14,6 +14,10 @@ first_rank_total = "First Rank on MDL (Total)"
 top5_total = "Top 5 Rank on MDL (Total)"
 top10_total = "Top 10 Rank on MDL (Total)"
 longest_ranked_total = "Longest Ranked (Total)"
+first_rank_active = "First Rank on MDL (Active)"
+top5_active = "Top 5 Rank on MDL (Active)"
+top10_active = "Top 10 Rank on MDL (Active)"
+longest_ranked_active = "Longest Ranked (Active)"
 longest_win_streak = "Longest Win Streak"
 
 class MetricLeaderboardMetadata:

@@ -7,8 +7,9 @@ from utilities.clan_league_logging import get_logger
 from config.ClotConfig import ClotConfig
 from metricleaderboard import (MetricLeaderboardMetadata,
                                most_games_played, most_wins, best_win_rate, longest_win_streak, first_rank_streak,
-                               top5_streak, top10_streak, longest_ranked_streak, game_count,
-                               first_rank_total, top5_total, top10_total, longest_ranked_total, wins, percentage, days)
+                               top5_streak, top10_streak, longest_ranked_streak, game_count, first_rank_total,
+                               top5_total, top10_total, longest_ranked_total, wins, percentage, days, first_rank_active,
+                               top5_active, top10_active, longest_ranked_active)
 
 logger = get_logger()
 
@@ -185,6 +186,40 @@ def find_total_days_ranked(conn, rank: int = None) -> List[Tuple[int, int]]:
     return player_ranks
 
 
+def find_active_days_ranked(conn, rank: int = None) -> List[Tuple[int, int]]:
+    player_tuples = get_player_ranked_days(conn, rank)
+    result_tuples = []
+    current_date = datetime.now()
+    for player_tuple in player_tuples:
+        player_id = player_tuple[0]
+        recorded_dates = player_tuple[1].split(",")
+
+        day_counter = 0
+        previous_recorded_date = None
+
+        for recorded_date in recorded_dates[::-1]:
+            r_date = datetime.strptime(recorded_date, '%Y-%m-%d')
+            if previous_recorded_date is None:
+                if current_date - r_date < timedelta(hours=25):
+                    day_counter += 1
+                    previous_recorded_date = r_date
+                else:
+                    break
+            else:
+                elapsed = previous_recorded_date - r_date
+                if elapsed.days == 1:
+                    day_counter += 1
+                    previous_recorded_date = r_date
+                else:
+                    break
+
+        result_tuple = (player_id, day_counter)
+        result_tuples.append(result_tuple)
+
+    new_result_tuples = sorted(result_tuples, key=lambda x: x[1], reverse=True)
+    return new_result_tuples
+
+
 def find_longest_win_streak(conn):
     cursor = conn.cursor()    
     games_won_query = """
@@ -272,7 +307,11 @@ leaderboard_metadata: List[MetricLeaderboardMetadata] = [
     MetricLeaderboardMetadata(first_rank_total, days, find_total_days_ranked, 1),
     MetricLeaderboardMetadata(top5_total, days, find_total_days_ranked, 5),
     MetricLeaderboardMetadata(top10_total, days, find_total_days_ranked, 10),
-    MetricLeaderboardMetadata(longest_ranked_total, days, find_total_days_ranked)
+    MetricLeaderboardMetadata(longest_ranked_total, days, find_total_days_ranked),
+    MetricLeaderboardMetadata(first_rank_active, days, find_active_days_ranked, 1),
+    MetricLeaderboardMetadata(top5_active, days, find_active_days_ranked, 5),
+    MetricLeaderboardMetadata(top10_active, days, find_active_days_ranked, 10),
+    MetricLeaderboardMetadata(longest_ranked_active, days, find_active_days_ranked),
 ]
 
 
