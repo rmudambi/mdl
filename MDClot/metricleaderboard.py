@@ -4,11 +4,13 @@ GAME_COUNT = 'Game Count'
 PERCENTAGE = '%'
 WINS = 'Wins'
 DAYS = 'Days'
+RATING = 'Rating'
 
 
 class __LeaderboardMetrics(NamedTuple):
     MOST_GAMES_PLAYED: str = "Most Games Played"
     BEST_WIN_RATE: str = "Best Win Rate"
+    BEST_RATING = "Best Rating"
     MOST_WINS: str = "Most Wins"
     FIRST_RANK_STREAK: str = "First Rank on MDL (Streak)"
     TOP5_STREAK: str = "Top 5 Rank on MDL (Streak)"

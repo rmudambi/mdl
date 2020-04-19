@@ -6,11 +6,12 @@ from utilities.DAL import delete_leaderboard, insert_leaderboard, insert_stat_hi
 from utilities.clan_league_logging import get_logger
 from config.ClotConfig import ClotConfig
 from metricleaderboard import (MetricLeaderboardMetadata,
-                               LEADERBOARD_METRICS as METRICS,
+                               DAYS,
                                GAME_COUNT,
+                               LEADERBOARD_METRICS as METRICS,
                                PERCENTAGE,
-                               WINS,
-                               DAYS,)
+                               RATING,
+                               WINS,)
 
 logger = get_logger()
 
@@ -96,7 +97,16 @@ def find_games_won(conn):
     return player_tuples
 
 
-def find_win_rate(conn):
+def find_best_rating(conn) -> List[Tuple[int, int]]:
+    """Find best rating"""
+    cursor = conn.cursor()
+    cursor.execute('SELECT PlayerId, BestDisplayedRating FROM Players WHERE BestDisplayedRating IS NOT NULL ORDER BY BestRating DESC')
+    player_tuples = cursor.fetchall()
+    player_tuples = sorted(player_tuples, key=lambda x: x[1], reverse=True)
+    return player_tuples
+
+
+def find_win_rate(conn) -> List[Tuple[int, float]]:
     """ Find win rate.
     """
     cursor = conn.cursor()
@@ -313,6 +323,7 @@ leaderboard_metadata: List[MetricLeaderboardMetadata] = [
     MetricLeaderboardMetadata(METRICS.TOP5_ACTIVE, DAYS, find_active_days_ranked, 5),
     MetricLeaderboardMetadata(METRICS.TOP10_ACTIVE, DAYS, find_active_days_ranked, 10),
     MetricLeaderboardMetadata(METRICS.LONGEST_RANKED_ACTIVE, DAYS, find_active_days_ranked),
+    MetricLeaderboardMetadata(METRICS.BEST_RATING, RATING, find_best_rating),
 ]
 
 
