@@ -6,10 +6,11 @@ from utilities.DAL import delete_leaderboard, insert_leaderboard, insert_stat_hi
 from utilities.clan_league_logging import get_logger
 from config.ClotConfig import ClotConfig
 from metricleaderboard import (MetricLeaderboardMetadata,
-                               most_games_played, most_wins, best_win_rate, longest_win_streak, first_rank_streak,
-                               top5_streak, top10_streak, longest_ranked_streak, game_count, first_rank_total,
-                               top5_total, top10_total, longest_ranked_total, wins, percentage, days, first_rank_active,
-                               top5_active, top10_active, longest_ranked_active)
+                               LEADERBOARD_METRICS as METRICS,
+                               GAME_COUNT,
+                               PERCENTAGE,
+                               WINS,
+                               DAYS,)
 
 logger = get_logger()
 
@@ -296,22 +297,22 @@ def find_longest_win_streak(conn):
 
 
 leaderboard_metadata: List[MetricLeaderboardMetadata] = [
-    MetricLeaderboardMetadata(most_games_played, game_count, find_all_games),
-    MetricLeaderboardMetadata(most_wins, wins, find_games_won),
-    MetricLeaderboardMetadata(best_win_rate, percentage, find_win_rate),
-    MetricLeaderboardMetadata(longest_win_streak, wins, find_longest_win_streak),
-    MetricLeaderboardMetadata(first_rank_streak, days, find_longest_consecutive_days_ranked, 1),
-    MetricLeaderboardMetadata(top5_streak, days, find_longest_consecutive_days_ranked, 5),
-    MetricLeaderboardMetadata(top10_streak, days, find_longest_consecutive_days_ranked, 10),
-    MetricLeaderboardMetadata(longest_ranked_streak, days, find_longest_consecutive_days_ranked),
-    MetricLeaderboardMetadata(first_rank_total, days, find_total_days_ranked, 1),
-    MetricLeaderboardMetadata(top5_total, days, find_total_days_ranked, 5),
-    MetricLeaderboardMetadata(top10_total, days, find_total_days_ranked, 10),
-    MetricLeaderboardMetadata(longest_ranked_total, days, find_total_days_ranked),
-    MetricLeaderboardMetadata(first_rank_active, days, find_active_days_ranked, 1),
-    MetricLeaderboardMetadata(top5_active, days, find_active_days_ranked, 5),
-    MetricLeaderboardMetadata(top10_active, days, find_active_days_ranked, 10),
-    MetricLeaderboardMetadata(longest_ranked_active, days, find_active_days_ranked),
+    MetricLeaderboardMetadata(METRICS.MOST_GAMES_PLAYED, GAME_COUNT, find_all_games),
+    MetricLeaderboardMetadata(METRICS.MOST_WINS, WINS, find_games_won),
+    MetricLeaderboardMetadata(METRICS.BEST_WIN_RATE, PERCENTAGE, find_win_rate),
+    MetricLeaderboardMetadata(METRICS.LONGEST_WIN_STREAK, WINS, find_longest_win_streak),
+    MetricLeaderboardMetadata(METRICS.FIRST_RANK_STREAK, DAYS, find_longest_consecutive_days_ranked, 1),
+    MetricLeaderboardMetadata(METRICS.TOP5_STREAK, DAYS, find_longest_consecutive_days_ranked, 5),
+    MetricLeaderboardMetadata(METRICS.TOP10_STREAK, DAYS, find_longest_consecutive_days_ranked, 10),
+    MetricLeaderboardMetadata(METRICS.LONGEST_RANKED_STREAK, DAYS, find_longest_consecutive_days_ranked),
+    MetricLeaderboardMetadata(METRICS.FIRST_RANK_TOTAL, DAYS, find_total_days_ranked, 1),
+    MetricLeaderboardMetadata(METRICS.TOP5_TOTAL, DAYS, find_total_days_ranked, 5),
+    MetricLeaderboardMetadata(METRICS.TOP10_TOTAL, DAYS, find_total_days_ranked, 10),
+    MetricLeaderboardMetadata(METRICS.LONGEST_RANKED_TOTAL, DAYS, find_total_days_ranked),
+    MetricLeaderboardMetadata(METRICS.FIRST_RANK_ACTIVE, DAYS, find_active_days_ranked, 1),
+    MetricLeaderboardMetadata(METRICS.TOP5_ACTIVE, DAYS, find_active_days_ranked, 5),
+    MetricLeaderboardMetadata(METRICS.TOP10_ACTIVE, DAYS, find_active_days_ranked, 10),
+    MetricLeaderboardMetadata(METRICS.LONGEST_RANKED_ACTIVE, DAYS, find_active_days_ranked),
 ]
 
 

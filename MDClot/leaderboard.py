@@ -1,10 +1,9 @@
 from flask import Blueprint, render_template
 
 from entities.Clan import Clan
-from utilities.StatQueries import (best_win_rate, find_metric_leaderboard, find_player_leaderboard_by_clan,
-                                   leaderboard_metadata, longest_win_streak, most_games_played)
+from utilities.StatQueries import find_metric_leaderboard, find_player_leaderboard_by_clan, leaderboard_metadata
 
-from metricleaderboard import game_count, percentage, wins
+from metricleaderboard import GAME_COUNT, PERCENTAGE, WINS, LEADERBOARD_METRICS as METRICS
 from lot import LOTContainer
 
 
@@ -13,9 +12,9 @@ leaderboard_page = Blueprint('leaderboard_page', __name__, template_folder='temp
 
 leaderboard_metrics = [(metadata.metric_name, metadata.metric_unit) for metadata in leaderboard_metadata]
 clan_page_metrics = [
-    (most_games_played, game_count),
-    (best_win_rate, percentage),
-    (longest_win_streak, wins)
+    (METRICS.MOST_GAMES_PLAYED, GAME_COUNT),
+    (METRICS.BEST_WIN_RATE, PERCENTAGE),
+    (METRICS.LONGEST_WIN_STREAK, WINS)
 ]
 
 
