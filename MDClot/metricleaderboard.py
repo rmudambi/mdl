@@ -1,20 +1,34 @@
-game_count = 'Game Count'
-percentage = '%'
-wins = 'Wins'
-days = 'Days'
+from typing import NamedTuple
 
-most_games_played = "Most Games Played"
-best_win_rate = "Best Win Rate"
-most_wins = "Most Wins"
-first_rank_streak = "First Rank on MDL (Streak)"
-top5_streak = "Top 5 Rank on MDL (Streak)"
-top10_streak = "Top 10 Rank on MDL (Streak)"
-longest_ranked_streak = "Longest Ranked (Streak)"
-first_rank_total = "First Rank on MDL (Total)"
-top5_total = "Top 5 Rank on MDL (Total)"
-top10_total = "Top 10 Rank on MDL (Total)"
-longest_ranked_total = "Longest Ranked (Total)"
-longest_win_streak = "Longest Win Streak"
+GAME_COUNT = 'Game Count'
+PERCENTAGE = '%'
+WINS = 'Wins'
+DAYS = 'Days'
+RATING = 'Rating'
+
+
+class __LeaderboardMetrics(NamedTuple):
+    MOST_GAMES_PLAYED: str = "Most Games Played"
+    BEST_WIN_RATE: str = "Best Win Rate"
+    BEST_RATING = "Best Rating"
+    MOST_WINS: str = "Most Wins"
+    FIRST_RANK_STREAK: str = "First Rank on MDL (Streak)"
+    TOP5_STREAK: str = "Top 5 Rank on MDL (Streak)"
+    TOP10_STREAK: str = "Top 10 Rank on MDL (Streak)"
+    LONGEST_RANKED_STREAK: str = "Longest Ranked (Streak)"
+    FIRST_RANK_TOTAL: str = "First Rank on MDL (Total)"
+    TOP5_TOTAL: str = "Top 5 Rank on MDL (Total)"
+    TOP10_TOTAL: str = "Top 10 Rank on MDL (Total)"
+    LONGEST_RANKED_TOTAL: str = "Longest Ranked (Total)"
+    FIRST_RANK_ACTIVE: str = "First Rank on MDL (Active)"
+    TOP5_ACTIVE: str = "Top 5 Rank on MDL (Active)"
+    TOP10_ACTIVE: str = "Top 10 Rank on MDL (Active)"
+    LONGEST_RANKED_ACTIVE: str = "Longest Ranked (Active)"
+    LONGEST_WIN_STREAK: str = "Longest Win Streak"
+
+
+LEADERBOARD_METRICS = __LeaderboardMetrics()
+
 
 class MetricLeaderboardMetadata:
     def __init__(self, metric_name: str, metric_unit: str, build_leaderboard: callable, build_arg: int = None):

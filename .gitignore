@@ -135,3 +135,5 @@ dmypy.json
 # DB and config files
 MasterLadder/config/ClotConfig.py
 MasterLadder/mydatabase.db
+
+
