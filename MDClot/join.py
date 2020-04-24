@@ -1,7 +1,7 @@
 ﻿from flask import Blueprint, render_template, abort, session, redirect, Response
 from jinja2 import TemplateNotFound
 from utilities.DAL import find_player, insert_player, update_player
-from utilities.api import validateToken
+from utilities.api import validate_token
 from entities.Player import Player
 from lot import LOTContainer
 from config.ClotConfig import ClotConfig
@@ -33,7 +33,7 @@ def show():
             templateIDs = ','.join(str(template) for template in templates[template_counter:end])            
 
             #Call the warlight API to get the name and verify that the invite token is correct. Can only check for 15 templates at a time(API restriction).
-            apiret = validateToken(ClotConfig.email, ClotConfig.token, player_token, templateIDs)
+            apiret = validate_token(ClotConfig.email, ClotConfig.token, player_token, templateIDs)
 
             if (not "tokenIsValid" in str(apiret)) or ("CannotUseTemplate" in str(apiret)):
                 del apiret["clotpass"]
