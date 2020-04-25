@@ -280,12 +280,12 @@ $(document).ready(function(){
         },
     });
 
-    $(".wins").attr("title", "Games won on MDL. Players must have completed 20 games to be listed.");
-    $(".win_rate").attr("title", "Win % on MDL. Players must have completed 20 games to be listed.");
+    $(".wins").attr("title", "Games won on MTL. Players must have completed 20 games to be listed.");
+    $(".win_rate").attr("title", "Win % on MTL. Players must have completed 20 games to be listed.");
     $(".longest_win_streak").attr("title", "Players must have a win streak of 3 or more games to be listed.");
     $(".most_games_played").attr("title", "Players must have completed 20 games to be listed.");
-    $(".first_rank").attr("title", "Sorted by max conescutive days the rank was held. If a player leaves the ladder(or goes on vacation) for a day, the counter is reset.");
-    $(".clan_win_rate").attr("title", "Clans must have 3 or more active players on MDL.");
+    $(".first_rank").attr("title", "Sorted by max consecutive days the rank was held. If a player leaves the ladder(or goes on vacation) for a day, the counter is reset.");
+    $(".clan_win_rate").attr("title", "Clans must have 3 or more active players on MTL.");
     $(".clan_players").attr("title", "Sorted by player rating in this order - ranked, unranked(active), unranked(inactive)");    
 
     var template_veto_count = 7;

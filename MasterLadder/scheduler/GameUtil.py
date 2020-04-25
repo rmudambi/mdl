@@ -11,7 +11,7 @@ logger = get_logger()
 
 
 class GameUtil:
-    Message = ("This game has been created by MDL. If you fail to join it within 3 days, vote to end or decline, " 
+    Message = ("This game has been created by MTL. If you fail to join it within 3 days, vote to end or decline, " 
                 "it will count as a loss. For latest standings, please visit http://md-ladder.cloudapp.net/")
     GameSheetName = "All Games"
 

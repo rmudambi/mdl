@@ -64,7 +64,7 @@ def get_games():
 
 @api.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({'error': 'Resource does not exist on MDL'}), 404)
+    return make_response(jsonify({'error': 'Resource does not exist on MTL'}), 404)
 
 
 def populate_player_clan(player, container, is_minified=False):

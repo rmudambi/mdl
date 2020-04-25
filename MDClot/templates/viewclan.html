@@ -36,7 +36,7 @@
                             {%else%}
                             {{metric[1]|int}}
                             {%endif%}
-                            {%if metric[0] == "First Rank on MDL" or metric[0] == "Top 5 Rank on MDL" or metric[0] == "Top 10 Rank on MDL"%}
+                            {%if metric[0] == "First Rank on MTL" or metric[0] == "Top 5 Rank on MTL" or metric[0] == "Top 10 Rank on MTL"%}
                             {% if metric[1]|int == 1 %}
                               player
                             {%else%}
