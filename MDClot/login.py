@@ -1,13 +1,14 @@
-﻿from flask import Blueprint, render_template, abort, session, request, redirect
+﻿from flask import Blueprint, abort, redirect, render_template, request, session
 from jinja2 import TemplateNotFound
-from utilities.api import validateToken
+
+from utilities.api import validate_token
 from config.ClotConfig import ClotConfig
 
 
-login_page = Blueprint('login_page', __name__,
-                        template_folder='templates', static_folder="/static")
+login_page = Blueprint('login_page', __name__, template_folder='templates', static_folder="/static")
 
-#This page follows the instructions at http://wiki.warlight.net/index.php/CLOT_Authentication
+
+# This page follows the instructions at http://wiki.warlight.net/index.php/CLOT_Authentication
 @login_page.route('/login')
 def show():
     try:
@@ -22,11 +23,11 @@ def show():
         player_token = int(request.args.get('token'))
         clotpass = request.args.get('clotpass')
 
-        apiret = validateToken(ClotConfig.email, ClotConfig.token, player_token)
+        apiret = validate_token(ClotConfig.email, ClotConfig.token, player_token)
         if clotpass == apiret['clotpass']:
             session['authenticatedtoken'] = player_token
         
-        return redirect("/"+ state)
+        return redirect("/" + state)
     except TemplateNotFound as e:
         print(str(e))
         abort(404)
