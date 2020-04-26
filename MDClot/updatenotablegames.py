@@ -32,7 +32,7 @@ def show():
         for game_id in new_notable_games:
             game = find_game(conn, game_id)
             if game is None or game.finish_date is None or not(game.team_a == player_id or game.team_b == player_id):
-                return "You can only choose finished games you have played on MDL."
+                return "You can only choose finished games you have played on MTL."
 
         # Flush existing notable games before inserting new ones.
         delete_notable_games(conn, player_id)

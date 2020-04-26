@@ -385,7 +385,7 @@ class Scheduler:
             Scheduler.update_clan_tags(conn)
             Scheduler.update_player_clan_affiliation(conn)
 
-            logger.info("Update MDL stats")
+            logger.info("Update MTL stats")
             update_mdl_stats(conn)
 
     @staticmethod

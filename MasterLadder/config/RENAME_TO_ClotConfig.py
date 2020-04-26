@@ -1,7 +1,7 @@
 class ClotConfig:
     player_table_name = "Player"
     game_table_name = "Game"
-    tournament_name = "MDL"
+    tournament_name = "MTL"
     email = 'fill this with your warzone email'
     token = 'fill this with your warzone token'
     profile_id = "fill this with your warzone player id"

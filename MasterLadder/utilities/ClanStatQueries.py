@@ -16,9 +16,9 @@ all_time_highest_rating = "All-time highest rating"
 all_time_highest_rank = "All-time highest rank"
 current_average_rating = "Current average rating"
 current_highest_rating = "Current highest rating"
-players_with_first_rank = "First Rank on MDL"
-players_with_top5 = "Top 5 Rank on MDL"
-players_with_top10 = "Top 10 Rank on MDL"
+players_with_first_rank = "First Rank on MTL"
+players_with_top5 = "Top 5 Rank on MTL"
+players_with_top10 = "Top 10 Rank on MTL"
 
 def find_total_active_players(conn):
     """ Find count of players(Isjoined = true) for every clan.

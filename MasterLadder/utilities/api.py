@@ -152,7 +152,7 @@ def validate_token(email, token, player, *templates):
 
 def grantTrophy(email, token, player):
     """
-    Grants a trophy for #1 on MDL
+    Grants a trophy for #1 on MTL
     using credentials (email+token)
     returns response
     """
