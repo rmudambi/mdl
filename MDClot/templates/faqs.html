@@ -1,0 +1,70 @@
+{% block body %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>FAQs</h4>
+    </div>
+    <div class="panel-body">
+        <div id="content">
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active">
+                    <a data-target="#intro" data-toggle="tab">MTL</a>
+                </li>
+                {% if currentPlayer is not none %}
+                <li>
+                    <a data-target="#about" data-toggle="tab">About</a>
+                </li>
+                {% endif %}
+                <li>
+                    <a data-target="#gameallocation" data-toggle="tab">Allocation</a>
+                </li>
+                <li>
+                    <a data-target="#ranking" data-toggle="tab">Ranking</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="intro">
+                    <br />
+                    <iframe class="col-xs-12 col-sm-12 col-lg-12" height="315"
+                            src="https://www.youtube.com/embed/1EAWWs78sYI"
+                            frameborder="0" allowfullscreen></iframe>
+                </div>
+                {% if currentPlayer is not none %}
+                <div class="tab-pane" id="about">
+                    {% include 'about-text.html' %}
+                </div>
+                {% endif %}
+                <div class="tab-pane" id="gameallocation">
+                    <br />
+                    <b>How are games allocated?</b>
+                    <p>Games are allocated amongst players currently joined on the ladder. The ladder tries to pair
+                        similar players together.</p>
+                    <br />
+                    <b>How frequently are games scheduled?</b>
+                    <p>Games are scheduled every 2 hours.</p>
+                    <br />
+                    <b>How is my next opponent determined?</b>
+                    <p>From the list of players currently active on the ladder, you may be randomly assigned an
+                        opponent within a range of R-20 to R+20. Players are ordered on Elo rating.</p>
+                    <br />
+                    <b>How often can I play the same opponent?</b>
+                    <p>Two players can play against each other at most once every 7 days.</p>
+                    <br />
+                </div>
+                <div class="tab-pane" id="ranking">
+                    <br />
+                    <b>How are players ranked?</b>
+                    <p>Players are ranked on this ladder using the Elo Rating algorithm. A detailed explanation of
+                         Elo can be found
+                        <a href="https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/">here</a>.
+                        Players also get an activity bonus of up 80 rating points to encourage more activity on the
+                        ladder</p>
+                    <br />
+                    <b>How many games does a player need to stay ranked?</b>
+                    <p>All players with 20 or more completed games in the last 5 months will be ranked on the
+                        ladder.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -64,7 +64,31 @@
     <a href="/join" class="btn btn-success pull-right">Join Ladder</a> 
     {% endif %} 
 {% else %}
-<a href="/login?state=home" class="btn btn-success pull-right">Login</a> 
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-12 col-sm-12" data-spy="scroll" data-target="#sidebar-nav">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Welcome to the Multi-Template Ladder!</h4>
+                        </div>
+                        <div class="panel-body">
+                            <a href="/login?state=home" class="btn btn-success">Login</a>
+                            <a href="/login?state=join" class="btn btn-success">Login and Join Ladder</a>
+                            <div class="tab-pane">
+                                {% include 'about-text.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    {% include 'faqs.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 
 <div class="container-fluid">
@@ -72,7 +96,7 @@
         <div class="col-xs-12 col-sm-12" data-spy="scroll" data-target="#sidebar-nav">
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-lg-3" style="padding-right:0px;">
-                    <div class="panel-default">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Top Ranked Players</h4>
                         </div>
@@ -158,7 +182,7 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-lg-5" style="padding-right:0px;">
-                    <div class="panel-default">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Latest Games</h4>
                         </div>
@@ -224,65 +248,9 @@
                 </div>
                 <!-- Templates and FAQs -->
                 <div class="col-xs-12 col-sm-6 col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4>FAQs</h4>
-                        </div>
-                        <div class="panel-body">
-                            <div id="content">
-                                <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active">
-                                        <a data-target="#intro" data-toggle="tab">MTL</a>
-                                    </li>
-                                    <li>
-                                        <a data-target="#about" data-toggle="tab">About</a>
-                                    </li>
-                                    <li>
-                                        <a data-target="#gameallocation" data-toggle="tab">Allocation</a>
-                                    </li>
-                                    <li>
-                                        <a data-target="#ranking" data-toggle="tab">Ranking</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="intro">
-                                        <br />
-                                        <iframe class="col-xs-12 col-sm-12 col-lg-12" height="315" src="https://www.youtube.com/embed/1EAWWs78sYI" frameborder="0" allowfullscreen></iframe>
-                                    </div>
-                                    <div class="tab-pane" id="about">
-                                        <br />
-                                        <b>What is this all about?</b>
-                                        <p>This is a multi-template ladder based on {{templates|length}} templates. All games honor vacations and have a 3 day auto-boot. It checks results and allocates new games every two hours.</p>
-                                        <br />
-                                        <p>If you notice errors on any template or find bugs on the site, please contact <a href="https://www.warlight.net/Profile?p=2428496679">Master of the Dead</a></p>
-                                    </div>
-                                    <div class="tab-pane" id="gameallocation">
-                                        <br />
-                                        <b>How are games allocated?</b>
-                                        <p>Games are allocated amongst players currently joined on the ladder. The ladder tries to pair similar players together.</p>
-                                        <br />
-                                        <b>How frequently are games scheduled?</b>
-                                        <p>Games are scheduled every 2 hours.</p>
-                                        <br />
-                                        <b>How is my next opponent determined?</b>
-                                        <p>From the list of players currently active on the ladder, you may be randomly assigned an opponent within a range of R-20 to R+20. Players are ordered on Elo rating.</p>
-                                        <br />
-                                        <b>How often can I play the same opponent?</b>
-                                        <p>Two players can play against each other once in 7 days.</p>
-                                        <br />
-                                    </div>
-                                    <div class="tab-pane" id="ranking">
-                                        <br />
-                                        <b>How are players ranked?</b>
-                                        <p>Players are ranked on this ladder using the Elo Rating algorithm. A detailed explanation can be found <a href="https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/">here</a>.</p>
-                                        <br />
-                                        <b>How many games does a player need to stay ranked?</b>
-                                        <p>All players with 20 or more games in the last 5 months will be ranked on the ladder.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% if currentPlayer is not none %}
+                    {% include 'faqs.html' %}
+                    {% endif %}
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Templates Used</h4>
