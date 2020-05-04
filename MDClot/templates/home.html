@@ -1,68 +1,64 @@
 {%extends "base.html"%} 
-{%block body%} 
+{%block body%}
 {% if currentPlayer is not none %}
-    <div class="col-xs-12 col-sm-6 col-lg-3">
-        <div class="panel panel-default">
-            <table>
-                <tr>
-                    <td style="padding-left:40">
-                        <a href="/player?playerId={{currentPlayer.player_id}}">{{currentPlayer.player_name|escape}}</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding-left:40">
-                        Current Rating : {{ currentPlayer.displayed_rating }}
-                    </td>
-                </tr>
-                {% if currentPlayer.rank %}
-                <tr>
-                    <td style="padding-left:40">
-                        Current Rank : {{ currentPlayer.rank }}
-                    </td>
-                </tr>
-                {% endif %} 
-                {% if currentPlayer.best_rank %}
-                <tr>
-                    <td style="padding-left:40">
-                        Best rank ever achieved : {{ currentPlayer.best_rank }}
-                    </td>
-                </tr>
-                {% endif %} 
-                {% if currentPlayer.best_displayed_rating %}
-                <tr>
-                    <td style="padding-left:40">
-                        Best rating ever achieved : {{ currentPlayer.best_displayed_rating }}
-                    </td>
-                </tr>
-                {% endif %}
-            </table>
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-12 col-sm-6 col-lg-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Player Details</h4>
+                </div>
+                <div class="panel-body">
+                    <div><a href="/player?playerId={{currentPlayer.player_id}}">{{currentPlayer.player_name|escape}}</a></div>
+                    <div>Current Rating: {{ currentPlayer.displayed_rating }}</div>
+                    {% if currentPlayer.rank %}
+                    <div>Current Rank: {{ currentPlayer.rank }}</div>
+                    {% endif %}
+                    {% if currentPlayer.best_rank %}
+                    <div>Best rank ever achieved: {{ currentPlayer.best_rank }}</div>
+                    {% endif %}
+                    {% if currentPlayer.best_displayed_rating %}
+                    <div>Best rating ever achieved: {{ currentPlayer.best_displayed_rating }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-8 col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Manage Ladder Settings</h4>
+                </div>
+                <div class="panel-body">
+                    {% if currentPlayer.is_joined%}
+                    <table class="border">
+                        <tr>
+                            <td> Choose number of games</td>
+                            <td style="padding-left:10px; padding-right:30px">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                        {{currentPlayer.max_games}}
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                        {%for i in range(2,10) %}
+                                        <li role="presentation">
+                                            <a role="menuitem" tabindex="-1" href="/choice?playerId={{currentPlayer.player_id}}&&numberOfGames={{i}}">{{i}}</a>
+                                        </li>
+                                        {%endfor%}
+                                    </ul>
+                                </div>
+                            </td>
+                            <td><a href="/leave" class="btn btn-danger">Leave Ladder</a></td>
+                        </tr>
+                    </table>
+                    {% else %}
+                    <a href="/join" class="btn btn-success">Join Ladder</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
-    {% if currentPlayer.is_joined%}
-    <a href="/leave" class="btn btn-danger pull-right">Leave Ladder</a>
-    <table class="pull-right border">
-        <tr>
-            <td> Choose number of games</td>
-            <td style="padding-left:10px; padding-right:30px">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                        {{currentPlayer.max_games}}
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                        {%for i in range(2,10) %}
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="/choice?playerId={{currentPlayer.player_id}}&&numberOfGames={{i}}">{{i}}</a>
-                        </li>
-                        {%endfor%}
-                    </ul>
-                </div>
-            </td>
-        </tr>
-    </table>
-    {% else %}
-    <a href="/join" class="btn btn-success pull-right">Join Ladder</a> 
-    {% endif %} 
+</div>
 {% else %}
 <div class="container-fluid">
     <div class="row row-offcanvas row-offcanvas-left">
