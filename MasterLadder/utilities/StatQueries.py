@@ -5,13 +5,13 @@ from typing import List, Tuple
 from utilities.DAL import delete_leaderboard, insert_leaderboard, insert_stat_history_record
 from utilities.clan_league_logging import get_logger
 from config.ClotConfig import ClotConfig
-from metricleaderboard import (MetricLeaderboardMetadata,
-                               DAYS,
-                               GAME_COUNT,
-                               LEADERBOARD_METRICS as METRICS,
-                               PERCENTAGE,
-                               RATING,
-                               WINS,)
+from utilities.metricleaderboard import (MetricLeaderboardMetadata,
+                                         DAYS,
+                                         GAME_COUNT,
+                                         LEADERBOARD_METRICS as METRICS,
+                                         PERCENTAGE,
+                                         RATING,
+                                         WINS, )
 
 logger = get_logger()
 

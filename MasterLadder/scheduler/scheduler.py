@@ -400,14 +400,14 @@ class Scheduler:
             logger.info("Returning players from vacation")
             Scheduler.update_players_on_vacation()
 
-            # logger.info("Updating ranks")
-            # Scheduler.update_players_rank_status(current_date)
+            logger.info("Updating ranks")
+            Scheduler.update_players_rank_status(current_date)
 
-            # logger.info("Scheduling games")
-            # Scheduler.schedule_games()
+            logger.info("Scheduling games")
+            Scheduler.schedule_games()
 
-            # logger.info("Running daily tasks")
-            # Scheduler.run_daily_tasks(current_date)
+            logger.info("Running daily tasks")
+            Scheduler.run_daily_tasks(current_date)
 
             logger.info("Updating leaderboards")
             update_leaderboards()
