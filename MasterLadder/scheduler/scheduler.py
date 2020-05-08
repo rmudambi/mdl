@@ -2,7 +2,7 @@ from config.ClotConfig import ClotConfig
 from config.GameMessage import GameMessage
 from scheduler.GameUtil import GameUtil
 # TODO replace
-# from config.Backup import backup_database
+from config.Backup import backup_database
 from utilities.api import createGame, queryGame, validate_token
 from utilities.DAL import *
 from utilities.StatQueries import *
@@ -415,8 +415,8 @@ class Scheduler:
             logger.info("Compute clan stats")
             compute_clan_stats()
 
-            # logger.info("Backing up database")
-            # backup_database()
+            logger.info("Backing up database")
+            backup_database()
 
             logger.info("Last run time - %s", datetime.now().strftime('%m/%d/%Y - %H:%M:%S'))
         except Exception as ex:

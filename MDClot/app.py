@@ -7,6 +7,7 @@ from flask import Flask, render_template
 from api import api
 from home import home_page
 from login import login_page
+from logout import logout_page
 from join import join_page
 from clanleaderboard import clan_leaderboard_page
 from leaderboard import leaderboard_page
@@ -44,6 +45,7 @@ app.secret_key = 'sou2#z^%wi*46dt=#nfb3d_41g+uif$(koz498xdx^ll3vee_$'
 app.register_blueprint(api)
 app.register_blueprint(home_page)
 app.register_blueprint(login_page)
+app.register_blueprint(logout_page)
 app.register_blueprint(join_page)
 app.register_blueprint(clan_leaderboard_page)
 app.register_blueprint(leaderboard_page)
