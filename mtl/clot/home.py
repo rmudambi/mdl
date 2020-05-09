@@ -1,14 +1,14 @@
 from datetime import datetime
 
-from flask import Blueprint, render_template, abort, session
+from flask import abort, render_template, session, Blueprint
 from jinja2 import TemplateNotFound
 import sqlite3
 
-from config.ClotConfig import ClotConfig
-from utilities.DAL import find_player, insert_player, update_player
-from utilities.api import validate_token
+from mtl.clot.lot import LOTContainer
+from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.ladder.utilities.DAL import find_player, insert_player, update_player
+from mtl.ladder.utilities.api import validate_token
 
-from lot import LOTContainer
 
 home_page = Blueprint('home_page', __name__, template_folder='templates', static_folder="/static")
 

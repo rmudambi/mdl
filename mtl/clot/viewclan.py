@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, abort, session, request, redirect
 from jinja2 import TemplateNotFound, filters
-from lot import LOTContainer
-from utilities.DAL import find_clan, find_all_finished_games_by_clan, find_player
-from utilities.ClanStatQueries import find_clan_metrics
+from mtl.clot.lot import LOTContainer
+from mtl.ladder.utilities.DAL import find_clan, find_all_finished_games_by_clan, find_player
+from mtl.ladder.utilities.ClanStatQueries import find_clan_metrics
 import sqlite3
-from config.ClotConfig import ClotConfig
-from leaderboard import Leaderboard
-from viewplayer import templateFrequencyDistribution
+from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.clot.leaderboard import Leaderboard
+from mtl.clot.viewplayer import templateFrequencyDistribution
 
 from datetime import datetime
 

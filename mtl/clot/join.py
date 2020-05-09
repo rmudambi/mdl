@@ -1,13 +1,13 @@
-﻿from flask import Blueprint, render_template, abort, session, redirect, Response
+﻿from datetime import datetime
+
+from flask import abort, redirect, render_template, session, Blueprint
 from jinja2 import TemplateNotFound
-from utilities.DAL import find_player, insert_player, update_player
-from utilities.api import validate_token
-from entities.Player import Player
-from lot import LOTContainer
-from config.ClotConfig import ClotConfig
-from datetime import datetime
-import json
 import sqlite3
+
+from mtl.clot.lot import LOTContainer
+from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.ladder.utilities.api import validate_token
+from mtl.ladder.utilities.DAL import find_player, insert_player, update_player
 
 join_page = Blueprint('join_page', __name__,
                         template_folder='templates', static_folder="/static")

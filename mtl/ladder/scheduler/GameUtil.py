@@ -1,10 +1,10 @@
 from enum import Enum
-from utilities.DAL import *
-from config.ClotConfig import  ClotConfig
+from mtl.ladder.utilities.DAL import *
+from mtl.ladder.config.ClotConfig import  ClotConfig
 from datetime import datetime
-from utilities.api import deleteGame
+from mtl.ladder.utilities.api import deleteGame
 import random
-from utilities.clan_league_logging import get_logger
+from mtl.ladder.utilities.clan_league_logging import get_logger
 import sqlite3
 
 logger = get_logger()

@@ -1,8 +1,12 @@
-from flask import Blueprint, render_template, abort, session, request, redirect
-from jinja2 import TemplateNotFound
-from utilities.ClanStatQueries import *
-from lot import LOTContainer
+from flask import render_template, Blueprint
 import sqlite3
+
+from mtl.ladder.config import ClotConfig
+from mtl.ladder.utilities.ClanStatQueries import (find_clan_leaderboard, active_players, total_games, win_rate, wins,
+                                                  all_time_highest_rating, all_time_highest_rank,
+                                                  current_average_rating, current_highest_rating,
+                                                  players_with_first_rank, players_with_top5, players_with_top10,)
+from mtl.clot.lot import LOTContainer
 
 
 clan_leaderboard_page = Blueprint('clan_leaderboard_page', __name__,

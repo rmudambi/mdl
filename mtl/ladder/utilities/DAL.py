@@ -1,9 +1,9 @@
 import sqlite3
-from entities.Clan import Clan
-from entities.Game import Game
-from entities.Player import Player
-from entities.History import History
-from config.ClotConfig import ClotConfig
+from mtl.ladder.entities.Clan import Clan
+from mtl.ladder.entities.Game import Game
+from mtl.ladder.entities.Player import Player
+from mtl.ladder.entities.History import History
+from mtl.ladder.config.ClotConfig import ClotConfig
 from datetime import datetime, timedelta
 from typing import List
  
@@ -96,7 +96,7 @@ def insert_leaderboard(conn, leaderboard_record):
 
 def delete_leaderboard(conn, delete_time):
     cursor = conn.cursor() 
-    cursor.execute("DELETE FROM Leaderboard WHERE CreatedDate < ?", (delete_time,))
+    cursor.execute("DELETE from mtl.clot.leaderboard WHERE CreatedDate < ?", (delete_time,))
     conn.commit()
 
 def insert_clan_leaderboard(conn, clan_leaderboard_record):

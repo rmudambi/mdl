@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, abort, session, request, redirect
 from jinja2 import TemplateNotFound
-from utilities.DAL import *
-from lot import LOTContainer
+from mtl.ladder.utilities.DAL import *
+from mtl.clot.lot import LOTContainer
 
 
 report_page = Blueprint('report_page', __name__,

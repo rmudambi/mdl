@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, abort, session, request, redirect
 from jinja2 import TemplateNotFound, filters
-from utilities.DAL import find_player, insert_notable_game, delete_notable_games, find_game
+from mtl.ladder.utilities.DAL import find_player, insert_notable_game, delete_notable_games, find_game
 import sqlite3
-from config.ClotConfig import ClotConfig
+from mtl.ladder.config.ClotConfig import ClotConfig
 from datetime import datetime
 
 

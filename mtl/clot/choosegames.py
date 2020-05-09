@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, abort, session, redirect, request
-from jinja2 import TemplateNotFound
-from utilities.DAL import find_player, update_player
-import sqlite3
-from config.ClotConfig import ClotConfig
 from random import randint
+
+from flask import redirect, request, session, Blueprint
+import sqlite3
+
+from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.ladder.utilities.DAL import find_player, update_player
 
 choose_games_page = Blueprint('choose_games_page', __name__,
                         template_folder='templates', static_folder="/static")

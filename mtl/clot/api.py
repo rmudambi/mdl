@@ -1,10 +1,10 @@
-from flask import Blueprint, jsonify, abort, make_response, request
+from flask import abort, jsonify, make_response, request, Blueprint
 import sqlite3
 
+from mtl.clot.lot import LOTContainer
 from mtl.ladder.config import ClotConfig
-from utilities.DAL import find_recent_unexpired_games
+from mtl.ladder.utilities.DAL import find_recent_unexpired_games
 
-from lot import LOTContainer
 
 api = Blueprint('api', __name__)
 

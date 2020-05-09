@@ -1,5 +1,3 @@
-from config.ClotConfig import ClotConfig
-
 class Clan:
     def __init__(self, **props):
         self.id = props.get("Id")

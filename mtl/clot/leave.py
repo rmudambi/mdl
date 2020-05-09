@@ -1,9 +1,10 @@
-﻿from flask import Blueprint, render_template, abort, session, redirect
+﻿from flask import abort, redirect, render_template, session, Blueprint
 from jinja2 import TemplateNotFound
-from utilities.DAL import find_player, update_player
-from lot import LOTContainer
 import sqlite3
-from config.ClotConfig import ClotConfig
+
+from mtl.clot.lot import LOTContainer
+from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.ladder.utilities.DAL import find_player, update_player
 
 leave_page = Blueprint('leave_page', __name__,
                         template_folder='templates', static_folder="/static")

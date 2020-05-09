@@ -1,21 +1,22 @@
-from config.ClotConfig import ClotConfig
-from config.GameMessage import GameMessage
-from scheduler.GameUtil import GameUtil
+from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.ladder.config.GameMessage import GameMessage
+from mtl.ladder.entities.Game import Game
+from mtl.ladder.scheduler.GameUtil import GameUtil
 # TODO replace
-from config.Backup import backup_database
-from utilities.api import createGame, queryGame, validate_token
-from utilities.DAL import *
-from utilities.StatQueries import *
-from utilities.ClanStatQueries import compute_clan_stats
+from mtl.ladder.config.Backup import backup_database
+from mtl.ladder.utilities.api import createGame, queryGame, validate_token
+from mtl.ladder.utilities.DAL import *
+from mtl.ladder.utilities.StatQueries import *
+from mtl.ladder.utilities.ClanStatQueries import compute_clan_stats
 from datetime import datetime
 import random
 from itertools import islice
 from collections import defaultdict
-from utilities import Elo
+from mtl.ladder.utilities import Elo
 import sqlite3
 from bs4 import BeautifulSoup
 import requests
-from utilities.clan_league_logging import get_logger
+from mtl.ladder.utilities.clan_league_logging import get_logger
 
 logger = get_logger()
 
@@ -415,8 +416,8 @@ class Scheduler:
             logger.info("Compute clan stats")
             compute_clan_stats()
 
-            logger.info("Backing up database")
-            backup_database()
+            # logger.info("Backing up database")
+            # backup_database()
 
             logger.info("Last run time - %s", datetime.now().strftime('%m/%d/%Y - %H:%M:%S'))
         except Exception as ex:

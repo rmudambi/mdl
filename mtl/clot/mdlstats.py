@@ -1,9 +1,8 @@
-from flask import Blueprint, render_template, abort, session, request, redirect
-from jinja2 import TemplateNotFound, filters
-from lot import LOTContainer
-from utilities.StatQueries import *
+from flask import Blueprint, render_template
+from mtl.clot.lot import LOTContainer
+from mtl.ladder.utilities.StatQueries import *
 from datetime import datetime
-from config.ClotConfig import ClotConfig
+from mtl.ladder.config.ClotConfig import ClotConfig
 
 
 mdl_stats_page = Blueprint('mdl_stats_page', __name__,

@@ -1,7 +1,7 @@
 from time import sleep, clock
 import datetime
-from scheduler.scheduler import Scheduler
-from utilities.clan_league_logging import get_logger
+from mtl.ladder.scheduler.scheduler import Scheduler
+from mtl.ladder.utilities.clan_league_logging import get_logger
 
 
 logger = get_logger()

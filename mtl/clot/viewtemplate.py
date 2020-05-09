@@ -1,9 +1,9 @@
 ﻿from flask import Blueprint, render_template, abort, session, request, redirect
 from jinja2 import TemplateNotFound, filters
-from lot import LOTContainer
-from utilities.DAL import find_player, find_template_games
+from mtl.clot.lot import LOTContainer
+from mtl.ladder.utilities.DAL import find_player, find_template_games
 import sqlite3
-from config.ClotConfig import ClotConfig
+from mtl.ladder.config.ClotConfig import ClotConfig
 from datetime import datetime
 
 

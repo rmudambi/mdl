@@ -1,6 +1,6 @@
-﻿from utilities.DAL import *
+﻿from mtl.ladder.utilities.DAL import *
 import sqlite3
-from config.ClotConfig import ClotConfig
+from mtl.ladder.config.ClotConfig import ClotConfig
 
 class LOTContainer():   
     def __init__(self):

@@ -1,4 +1,4 @@
-from config.ClotConfig import ClotConfig
+from mtl.ladder.config.ClotConfig import ClotConfig
 
 class Player:
     def __init__(self, **props):

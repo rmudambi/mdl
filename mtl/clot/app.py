@@ -3,26 +3,27 @@ This script runs the application using a development server.
 It contains the definition of routes and views for the application.
 """
 
-from flask import Flask, render_template
-from api import api
-from home import home_page
-from login import login_page
-from logout import logout_page
-from join import join_page
-from clanleaderboard import clan_leaderboard_page
-from leaderboard import leaderboard_page
-from leave import leave_page
-from choosegames import choose_games_page
-from mdlstats import mdl_stats_page
-from report import report_page
-from updatenotablegames import update_notable_games_page
-from vetotemplates import veto_templates_page
-from viewclan import view_clan_page
-from viewplayer import view_player_page
-from viewallplayers import view_all_players_page
-from viewtemplate import view_template_page
-from waitress import serve
+from flask import Flask
 from flask_compress import Compress
+from waitress import serve
+
+from mtl.clot.api import api
+from mtl.clot.choosegames import choose_games_page
+from mtl.clot.clanleaderboard import clan_leaderboard_page
+from mtl.clot.home import home_page
+from mtl.clot.join import join_page
+from mtl.clot.leaderboard import leaderboard_page
+from mtl.clot.leave import leave_page
+from mtl.clot.login import login_page
+from mtl.clot.logout import logout_page
+from mtl.clot.mdlstats import mdl_stats_page
+from mtl.clot.report import report_page
+from mtl.clot.updatenotablegames import update_notable_games_page
+from mtl.clot.vetotemplates import veto_templates_page
+from mtl.clot.viewallplayers import view_all_players_page
+from mtl.clot.viewclan import view_clan_page
+from mtl.clot.viewplayer import view_player_page
+from mtl.clot.viewtemplate import view_template_page
 
 
 app = Flask(__name__)

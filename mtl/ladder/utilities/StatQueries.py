@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 import sqlite3
 from typing import List, Tuple
 
-from utilities.DAL import delete_leaderboard, insert_leaderboard, insert_stat_history_record
-from utilities.clan_league_logging import get_logger
-from config.ClotConfig import ClotConfig
-from utilities.metricleaderboard import (MetricLeaderboardMetadata,
+from mtl.ladder.utilities.DAL import delete_leaderboard, insert_leaderboard, insert_stat_history_record
+from mtl.ladder.utilities.clan_league_logging import get_logger
+from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.ladder.utilities.metricleaderboard import (MetricLeaderboardMetadata,
                                          DAYS,
                                          GAME_COUNT,
                                          LEADERBOARD_METRICS as METRICS,
@@ -349,7 +349,7 @@ def find_metric_leaderboard(metric_name):
     conn = sqlite3.connect(ClotConfig.database_location)
     cursor = conn.cursor()
     cursor.execute("""SELECT group_concat(PlayerId), group_concat(Value), datetime((strftime('%s', CreatedDate) / 7200) * 7200, 'unixepoch') AS createdTime
-                         FROM Leaderboard 
+                         from mtl.clot.leaderboard 
                          WHERE Metric=?
                          GROUP BY createdTime
                          ORDER BY createdTime DESC
@@ -378,7 +378,7 @@ def find_player_leaderboard_by_clan(clan, metric_name):
     conn = sqlite3.connect(ClotConfig.database_location)
     cursor = conn.cursor()
     cursor.execute("""SELECT P.PlayerId, L.Value
-                        FROM Leaderboard L 
+                        from mtl.clot.leaderboard L 
                         JOIN Players P
                         ON L.PlayerId = P.PlayerId
                         WHERE P.Clan = ? AND L.Metric = ?""", (clan.name, metric_name))

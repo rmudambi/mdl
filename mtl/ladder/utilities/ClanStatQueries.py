@@ -1,8 +1,8 @@
-from config.ClotConfig import ClotConfig
+from mtl.ladder.config.ClotConfig import ClotConfig
 from datetime import datetime, timedelta
 import sqlite3
-from utilities.DAL import *
-from utilities.clan_league_logging import get_logger
+from mtl.ladder.utilities.DAL import *
+from mtl.ladder.utilities.clan_league_logging import get_logger
 
 
 logger = get_logger()

@@ -1,8 +1,8 @@
 ﻿from flask import Blueprint, abort, redirect, render_template, request, session
 from jinja2 import TemplateNotFound
 
-from utilities.api import validate_token
-from config.ClotConfig import ClotConfig
+from mtl.ladder.utilities.api import validate_token
+from mtl.ladder.config.ClotConfig import ClotConfig
 
 
 login_page = Blueprint('login_page', __name__, template_folder='templates', static_folder="/static")
