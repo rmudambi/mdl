@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, abort, make_response, request
 import sqlite3
 
-from config.ClotConfig import ClotConfig
+from mtl.ladder.config import ClotConfig
 from utilities.DAL import find_recent_unexpired_games
 
 from lot import LOTContainer
