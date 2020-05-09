@@ -2,8 +2,8 @@ from config.ClotConfig import ClotConfig
 from config.GameMessage import GameMessage
 from scheduler.GameUtil import GameUtil
 # TODO replace
-# from config.Backup import backup_database
-from utilities.api import createGame, queryGame, validateToken
+from config.Backup import backup_database
+from utilities.api import createGame, queryGame, validate_token
 from utilities.DAL import *
 from utilities.StatQueries import *
 from utilities.ClanStatQueries import compute_clan_stats
@@ -193,7 +193,7 @@ class Scheduler:
             for team in teams:
                 try:
                     # Check if player is on vacation
-                    vac_resp = validateToken(ClotConfig.email, ClotConfig.token, team)
+                    vac_resp = validate_token(ClotConfig.email, ClotConfig.token, team)
                     if 'onVacationUntil' in vac_resp:
                         is_any_player_on_vacation = True
                         break
@@ -244,7 +244,7 @@ class Scheduler:
         players = find_players_on_vacation(conn)
         players_returning = []
         for player in players:
-            response = validateToken(ClotConfig.email, ClotConfig.token, player.player_id)
+            response = validate_token(ClotConfig.email, ClotConfig.token, player.player_id)
             if not 'onVacationUntil' in response:
                 player.return_from_vacation()
                 players_returning.append(player)
@@ -268,7 +268,7 @@ class Scheduler:
 
             # Check if player is on vacation
             try:
-                response = validateToken(ClotConfig.email, ClotConfig.token, player.player_id)
+                response = validate_token(ClotConfig.email, ClotConfig.token, player.player_id)
                 if 'blacklisted' in response:
                     player.update_status_on_leave(False)
                 elif 'onVacationUntil' in response:
@@ -341,7 +341,7 @@ class Scheduler:
         for player in players:
             try:
                 #Call the warlight API to get the name and clan.
-                apiret = validateToken(ClotConfig.email, ClotConfig.token, player.player_id)
+                apiret = validate_token(ClotConfig.email, ClotConfig.token, player.player_id)
                 current_name = apiret['name']
                 current_clan = None
                 if 'clan' in apiret.keys(): 
@@ -385,7 +385,7 @@ class Scheduler:
             Scheduler.update_clan_tags(conn)
             Scheduler.update_player_clan_affiliation(conn)
 
-            logger.info("Update MDL stats")
+            logger.info("Update MTL stats")
             update_mdl_stats(conn)
 
     @staticmethod
@@ -400,14 +400,14 @@ class Scheduler:
             logger.info("Returning players from vacation")
             Scheduler.update_players_on_vacation()
 
-            # logger.info("Updating ranks")
-            # Scheduler.update_players_rank_status(current_date)
+            logger.info("Updating ranks")
+            Scheduler.update_players_rank_status(current_date)
 
-            # logger.info("Scheduling games")
-            # Scheduler.schedule_games()
+            logger.info("Scheduling games")
+            Scheduler.schedule_games()
 
-            # logger.info("Running daily tasks")
-            # Scheduler.run_daily_tasks(current_date)
+            logger.info("Running daily tasks")
+            Scheduler.run_daily_tasks(current_date)
 
             logger.info("Updating leaderboards")
             update_leaderboards()
@@ -415,8 +415,8 @@ class Scheduler:
             logger.info("Compute clan stats")
             compute_clan_stats()
 
-            # logger.info("Backing up database")
-            # backup_database()
+            logger.info("Backing up database")
+            backup_database()
 
             logger.info("Last run time - %s", datetime.now().strftime('%m/%d/%Y - %H:%M:%S'))
         except Exception as ex:

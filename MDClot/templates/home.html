@@ -1,70 +1,94 @@
 {%extends "base.html"%} 
-{%block body%} 
+{%block body%}
 {% if currentPlayer is not none %}
-    <div class="col-xs-12 col-sm-6 col-lg-3">
-        <div class="panel panel-default">
-            <table>
-                <tr>
-                    <td style="padding-left:40">
-                        <a href="/player?playerId={{currentPlayer.player_id}}">{{currentPlayer.player_name|escape}}</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding-left:40">
-                        Current Rating : {{ currentPlayer.displayed_rating }}
-                    </td>
-                </tr>
-                {% if currentPlayer.rank %}
-                <tr>
-                    <td style="padding-left:40">
-                        Current Rank : {{ currentPlayer.rank }}
-                    </td>
-                </tr>
-                {% endif %} 
-                {% if currentPlayer.best_rank %}
-                <tr>
-                    <td style="padding-left:40">
-                        Best rank ever achieved : {{ currentPlayer.best_rank }}
-                    </td>
-                </tr>
-                {% endif %} 
-                {% if currentPlayer.best_displayed_rating %}
-                <tr>
-                    <td style="padding-left:40">
-                        Best rating ever achieved : {{ currentPlayer.best_displayed_rating }}
-                    </td>
-                </tr>
-                {% endif %}
-            </table>
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-12 col-sm-6 col-lg-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Player Details</h4>
+                </div>
+                <div class="panel-body">
+                    <div><a href="/player?playerId={{currentPlayer.player_id}}">{{currentPlayer.player_name|escape}}</a></div>
+                    <div>Current Rating: {{ currentPlayer.displayed_rating }}</div>
+                    {% if currentPlayer.rank %}
+                    <div>Current Rank: {{ currentPlayer.rank }}</div>
+                    {% endif %}
+                    {% if currentPlayer.best_rank %}
+                    <div>Best rank ever achieved: {{ currentPlayer.best_rank }}</div>
+                    {% endif %}
+                    {% if currentPlayer.best_displayed_rating %}
+                    <div>Best rating ever achieved: {{ currentPlayer.best_displayed_rating }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-8 col-lg-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Manage Ladder Settings</h4>
+                </div>
+                <div class="panel-body">
+                    {% if currentPlayer.is_joined%}
+                    <table class="border">
+                        <tr>
+                            <td> Choose number of games</td>
+                            <td style="padding-left:10px; padding-right:30px">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                        {{currentPlayer.max_games}}
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                        {%for i in range(2,10) %}
+                                        <li role="presentation">
+                                            <a role="menuitem" tabindex="-1" href="/choice?playerId={{currentPlayer.player_id}}&&numberOfGames={{i}}">{{i}}</a>
+                                        </li>
+                                        {%endfor%}
+                                    </ul>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="/leave" class="btn btn-danger">Leave Ladder</a>
+                                <a href="/logout" class="btn btn-danger">Logout</a>
+                            </td>
+                        </tr>
+                    </table>
+                    {% else %}
+                    <a href="/join" class="btn btn-success">Join Ladder</a>
+                    <a href="/logout" class="btn btn-danger">Logout</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
-    {% if currentPlayer.is_joined%}
-    <a href="/leave" class="btn btn-danger pull-right">Leave Ladder</a>
-    <table class="pull-right border">
-        <tr>
-            <td> Choose number of games</td>
-            <td style="padding-left:10px; padding-right:30px">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                        {{currentPlayer.max_games}}
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                        {%for i in range(2,10) %}
-                        <li role="presentation">
-                            <a role="menuitem" tabindex="-1" href="/choice?playerId={{currentPlayer.player_id}}&&numberOfGames={{i}}">{{i}}</a>
-                        </li>
-                        {%endfor%}
-                    </ul>
-                </div>
-            </td>
-        </tr>
-    </table>
-    {% else %}
-    <a href="/join" class="btn btn-success pull-right">Join Ladder</a> 
-    {% endif %} 
+</div>
 {% else %}
-<a href="/login?state=home" class="btn btn-success pull-right">Login</a> 
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-12 col-sm-12" data-spy="scroll" data-target="#sidebar-nav">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Welcome to the Multi-Template Ladder!</h4>
+                        </div>
+                        <div class="panel-body">
+                            <a href="/login?state=home" class="btn btn-success">Login</a>
+                            <a href="/login?state=join" class="btn btn-success">Login and Join Ladder</a>
+                            <div class="tab-pane">
+                                {% include 'about-text.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    {% include 'faqs.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 
 <div class="container-fluid">
@@ -72,7 +96,7 @@
         <div class="col-xs-12 col-sm-12" data-spy="scroll" data-target="#sidebar-nav">
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-lg-3" style="padding-right:0px;">
-                    <div class="panel-default">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Top Ranked Players</h4>
                         </div>
@@ -116,7 +140,7 @@
                                     Currently Active players : {{player_count}} <a href="/allplayers" class="pull-right">View all</a>
                                 </span>
                                 <br/>
-                                <span>Total games on MDL : {{container.total_game_count|escape}}</span>
+                                <span>Total games on MTL : {{container.total_game_count|escape}}</span>
                             </div>
                         </div>
                     </div>
@@ -151,14 +175,14 @@
                         <table>
                             <tr>
                                 <td style="padding:5px; padding-left:20px">
-                                    <a href="/mdlstats"> MDL Statistics</a>
+                                    <a href="/mdlstats"> MTL Statistics</a>
                                 </td>
                             </tr>
                         </table>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-lg-5" style="padding-right:0px;">
-                    <div class="panel-default">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Latest Games</h4>
                         </div>
@@ -224,65 +248,9 @@
                 </div>
                 <!-- Templates and FAQs -->
                 <div class="col-xs-12 col-sm-6 col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4>FAQs</h4>
-                        </div>
-                        <div class="panel-body">
-                            <div id="content">
-                                <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active">
-                                        <a data-target="#intro" data-toggle="tab">MDL</a>
-                                    </li>
-                                    <li>
-                                        <a data-target="#about" data-toggle="tab">About</a>
-                                    </li>
-                                    <li>
-                                        <a data-target="#gameallocation" data-toggle="tab">Allocation</a>
-                                    </li>
-                                    <li>
-                                        <a data-target="#ranking" data-toggle="tab">Ranking</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="intro">
-                                        <br />
-                                        <iframe class="col-xs-12 col-sm-12 col-lg-12" height="315" src="https://www.youtube.com/embed/1EAWWs78sYI" frameborder="0" allowfullscreen></iframe>
-                                    </div>
-                                    <div class="tab-pane" id="about">
-                                        <br />
-                                        <b>What is this all about?</b>
-                                        <p>This is a custom multi-day ladder based on {{templates|length}} templates. All games honor vacations and have a 3 day auto-boot. It checks results and allocates new games every two hours.</p>
-                                        <br />
-                                        <p>If you notice errors on any template or find bugs on the site, please contact <a href="https://www.warlight.net/Profile?p=2428496679">Master of the Dead</a></p>
-                                    </div>
-                                    <div class="tab-pane" id="gameallocation">
-                                        <br />
-                                        <b>How are games allocated?</b>
-                                        <p>Games are allocated amongst players currently joined on the ladder. The ladder tries to pair similar players together.</p>
-                                        <br />
-                                        <b>How frequently are games scheduled?</b>
-                                        <p>Games are scheduled every 2 hours.</p>
-                                        <br />
-                                        <b>How is my next opponent determined?</b>
-                                        <p>From the list of players currently active on the ladder, you may be randomly assigned an opponent within a range of R-20 to R+20. Players are ordered on Elo rating.</p>
-                                        <br />
-                                        <b>How often can I play the same opponent?</b>
-                                        <p>Two players can play against each other once in 7 days.</p>
-                                        <br />
-                                    </div>
-                                    <div class="tab-pane" id="ranking">
-                                        <br />
-                                        <b>How are players ranked?</b>
-                                        <p>Players are ranked on this ladder using the Elo Rating algorithm. A detailed explanation can be found <a href="https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/">here</a>.</p>
-                                        <br />
-                                        <b>How many games does a player need to stay ranked?</b>
-                                        <p>All players with 20 or more games in the last 5 months will be ranked on the ladder.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% if currentPlayer is not none %}
+                    {% include 'faqs.html' %}
+                    {% endif %}
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Templates Used</h4>

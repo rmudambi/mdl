@@ -3,7 +3,7 @@ from flask import Blueprint, render_template
 from entities.Clan import Clan
 from utilities.StatQueries import find_metric_leaderboard, find_player_leaderboard_by_clan, leaderboard_metadata
 
-from metricleaderboard import GAME_COUNT, PERCENTAGE, WINS, LEADERBOARD_METRICS as METRICS
+from utilities.metricleaderboard import GAME_COUNT, PERCENTAGE, WINS, LEADERBOARD_METRICS as METRICS
 from lot import LOTContainer
 
 

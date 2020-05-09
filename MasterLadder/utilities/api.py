@@ -131,7 +131,8 @@ def deleteGame(email, token, gameID):
     if 'success' not in jsonOutput:
         raise APIError("Unknown error!")
 
-def validateToken(email, token, player, *templates):
+
+def validate_token(email, token, player, *templates):
     """
     Validates an inviteToken
     using credentials (email+token)
@@ -144,14 +145,14 @@ def validateToken(email, token, player, *templates):
     data['Token'] = player
     data['TemplateIDs'] = templates
     r = requests.post(url=site, params=data)
-    jsonOutput = r.json()
-    if 'error' in jsonOutput:
-        raise APIError(jsonOutput['error'])
-    return jsonOutput
+    json_output = r.json()
+    if 'error' in json_output:
+        raise APIError(json_output['error'])
+    return json_output
 
 def grantTrophy(email, token, player):
     """
-    Grants a trophy for #1 on MDL
+    Grants a trophy for #1 on MTL
     using credentials (email+token)
     returns response
     """
