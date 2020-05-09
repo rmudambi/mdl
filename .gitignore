@@ -133,7 +133,7 @@ dmypy.json
 .idea/
 
 # DB and config files
-MasterLadder/config/ClotConfig.py
-MasterLadder/mydatabase.db
+ladder/config/ClotConfig.py
+ladder/mydatabase.db
 
 

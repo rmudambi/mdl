@@ -77,7 +77,9 @@ class ClotConfig:
         1124714:"Pangea Ultima",
         1124718:"Turkey LD",
         1124719:"Master Mania",
-        1215811:"Blitzkrieg Bork"
+        1215811:"Blitzkrieg Bork",
+        1298206:"Timid Lands",
+        1298218:"Landria",
     }
 
     template_protips = {
