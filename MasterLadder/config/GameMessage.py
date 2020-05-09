@@ -544,3 +544,13 @@ Order Priority Card [1 piece, 0 weight]
 Blockade Card 200%
 Gift Card [5 pieces, start with 5 pieces]"""
 
+    messages[1124714] = """Name: Pangea Ultima
+Base Income: 6
+Starts X initial armies: 3x2
+Luck Modifier + Rounding Mode: 0% WR
+Neutrals: 2
+In dist Neutrals: 4
+Wastelands: 8 wastelands of 10
+Fog: Normal
+Move Order: Cyclic
+Cards [pieces]: Reinforcement [6 for +5], OP [6], OD [5], Blockade [12, 400%]"""
