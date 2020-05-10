@@ -1,24 +1,27 @@
-from mtl.ladder.config.ClotConfig import ClotConfig
-from datetime import datetime, timedelta
+from datetime import datetime
+
 import sqlite3
-from mtl.ladder.utilities.DAL import *
+
+from mtl.ladder.config import clot_config
 from mtl.ladder.utilities.clan_league_logging import get_logger
+from mtl.ladder.utilities.dal import delete_clan_leaderboard, insert_clan_leaderboard
 
 
 logger = get_logger()
 
-active_players = "Active Players"
-total_players = "Total Players"
-total_games = "Total Games Played"
-win_rate = "Win Rate"
-wins = "Wins"
-all_time_highest_rating = "All-time highest rating"
-all_time_highest_rank = "All-time highest rank"
-current_average_rating = "Current average rating"
-current_highest_rating = "Current highest rating"
-players_with_first_rank = "First Rank on MTL"
-players_with_top5 = "Top 5 Rank on MTL"
-players_with_top10 = "Top 10 Rank on MTL"
+ACTIVE_PLAYERS = "Active Players"
+TOTAL_PLAYERS = "Total Players"
+TOTAL_GAMES = "Total Games Played"
+WIN_RATE = "Win Rate"
+WINS = "Wins"
+ALL_TIME_HIGHEST_RATING = "All-time highest rating"
+ALL_TIME_HIGHEST_RANK = "All-time highest rank"
+CURRENT_AVERAGE_RATING = "Current average rating"
+CURRENT_HIGHEST_RATING = "Current highest rating"
+PLAYERS_WITH_FIRST_RANK = "First Rank on MTL"
+PLAYERS_WITH_TOP_5 = "Top 5 Rank on MTL"
+PLAYERS_WITH_TOP_10 = "Top 10 Rank on MTL"
+
 
 def find_total_active_players(conn):
     """ Find count of players(Isjoined = true) for every clan.
@@ -30,8 +33,9 @@ def find_total_active_players(conn):
                         WHERE IsJoined = 1 AND Clan !=""
                         GROUP BY Clan""")
 
-    clan_tuples= cursor.fetchall()
+    clan_tuples = cursor.fetchall()
     return clan_tuples
+
 
 def find_total_players(conn):
     """ Find count of players for every clan.
@@ -42,8 +46,9 @@ def find_total_players(conn):
                         WHERE Clan !=""
                         GROUP BY Clan""")
 
-    clan_tuples= cursor.fetchall()
+    clan_tuples = cursor.fetchall()
     return clan_tuples
+
 
 def create_clan_game_info(conn):
     """ 
@@ -68,6 +73,7 @@ def create_clan_game_info(conn):
     cursor.execute("""DROP TABLE IF EXISTS ClanGameInfo""")
     cursor.execute("""ALTER TABLE TempClanGameInfo RENAME TO ClanGameInfo""")
 
+
 def find_games_played_per_clan(conn):
     cursor = conn.cursor()
     cursor.execute("""SELECT Clan, sum(totalGames)
@@ -83,8 +89,9 @@ def find_games_played_per_clan(conn):
                         GROUP BY ClanB)
                         GROUP BY Clan""")
 
-    clan_tuples= cursor.fetchall()
+    clan_tuples = cursor.fetchall()
     return clan_tuples
+
 
 def find_games_won_per_clan(conn):
     cursor = conn.cursor()
@@ -93,8 +100,9 @@ def find_games_won_per_clan(conn):
                         WHERE WinnerClan IS NOT NULL
                         GROUP BY WinnerClan""")
 
-    clan_tuples= cursor.fetchall()
+    clan_tuples = cursor.fetchall()
     return clan_tuples
+
 
 def find_top_k_per_clan(conn, k):
     cursor = conn.cursor()
@@ -103,11 +111,13 @@ def find_top_k_per_clan(conn, k):
                         WHERE BestRank <= ? AND Clan !=""
                         GROUP BY Clan""", (k,))
 
-    clan_tuples= cursor.fetchall()
+    clan_tuples = cursor.fetchall()
     return clan_tuples
 
+
 def compute_clan_stats():
-    conn = sqlite3.connect(ClotConfig.database_location)
+    logger.info("Compute clan stats")
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     record_insert_time = datetime.now()
 
     # create intermediate clan game info table
@@ -120,11 +130,11 @@ def compute_clan_stats():
     for clan_tuple in clan_tuples:
         clan_name = clan_tuple[0]
         if clan_tuple[1] is not None:
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, active_players, clan_tuple[1]))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, ACTIVE_PLAYERS, clan_tuple[1]))
         if clan_tuple[2] is not None:
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, current_highest_rating, clan_tuple[2]))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, CURRENT_HIGHEST_RATING, clan_tuple[2]))
         if clan_tuple[3] is not None:
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, current_average_rating, clan_tuple[3]))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, CURRENT_AVERAGE_RATING, clan_tuple[3]))
 
     # Insert total_players, all_time_highest_rating, all_time_highest_rank
     logger.info("Insert total_players, all_time_highest_rating, all_time_highest_rank")
@@ -132,32 +142,32 @@ def compute_clan_stats():
     for clan_tuple in clan_tuples:
         clan_name = clan_tuple[0]
         if clan_tuple[1] is not None:
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, total_players, clan_tuple[1]))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, TOTAL_PLAYERS, clan_tuple[1]))
         if clan_tuple[2] is not None:
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, all_time_highest_rating, clan_tuple[2]))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, ALL_TIME_HIGHEST_RATING, clan_tuple[2]))
         if clan_tuple[3] is not None:
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, all_time_highest_rank, clan_tuple[3]))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, ALL_TIME_HIGHEST_RANK, clan_tuple[3]))
 
     # Insert players_with_first_rank
     logger.info("Insert players_with_first_rank")
     clan_tuples = find_top_k_per_clan(conn, 1)
     for clan_tuple in clan_tuples:
         clan_name = clan_tuple[0]
-        insert_clan_leaderboard(conn, (record_insert_time, clan_name, players_with_first_rank, clan_tuple[1]))
+        insert_clan_leaderboard(conn, (record_insert_time, clan_name, PLAYERS_WITH_FIRST_RANK, clan_tuple[1]))
 
     # Insert players_with_top5
     logger.info("Insert players_with_top5")
     clan_tuples = find_top_k_per_clan(conn, 5)
     for clan_tuple in clan_tuples:
         clan_name = clan_tuple[0]
-        insert_clan_leaderboard(conn, (record_insert_time, clan_name, players_with_top5, clan_tuple[1]))
+        insert_clan_leaderboard(conn, (record_insert_time, clan_name, PLAYERS_WITH_TOP_5, clan_tuple[1]))
 
     # Insert players_with_top10
     logger.info("Insert players_with_top10")
     clan_tuples = find_top_k_per_clan(conn, 10)
     for clan_tuple in clan_tuples:
         clan_name = clan_tuple[0]
-        insert_clan_leaderboard(conn, (record_insert_time, clan_name, players_with_top10, clan_tuple[1]))
+        insert_clan_leaderboard(conn, (record_insert_time, clan_name, PLAYERS_WITH_TOP_10, clan_tuple[1]))
 
     won_games_per_clan = {}
     # Insert games won per clan
@@ -167,7 +177,7 @@ def compute_clan_stats():
         clan_name = clan_tuple[0]
         won_games_per_clan[clan_name] = clan_tuple[1]
         if clan_tuple[1] is not None:
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, wins, clan_tuple[1]))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, WINS, clan_tuple[1]))
 
     # Insert Total games per clan
     logger.info("Insert Total games per clan")
@@ -175,16 +185,17 @@ def compute_clan_stats():
     for clan_tuple in clan_tuples:
         clan_name = clan_tuple[0]
         if clan_tuple[1] is not None:
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, total_games, clan_tuple[1]))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, TOTAL_GAMES, clan_tuple[1]))
             won_games = 0
             if clan_name in won_games_per_clan:
                 won_games = won_games_per_clan[clan_name]
-            insert_clan_leaderboard(conn, (record_insert_time, clan_name, win_rate, won_games / clan_tuple[1] * 100))
+            insert_clan_leaderboard(conn, (record_insert_time, clan_name, WIN_RATE, won_games / clan_tuple[1] * 100))
 
     delete_clan_leaderboard(conn, record_insert_time)
 
+
 def find_clan_metrics(clan):
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
     cursor.execute("""SELECT ClanName, group_concat(Metric), group_concat(Value), datetime((strftime('%s', CreatedDate) / 7200) * 7200, 'unixepoch') AS createdTime
                         FROM ClanLeaderboard WHERE ClanName = ?
@@ -192,8 +203,8 @@ def find_clan_metrics(clan):
                         ORDER BY CreatedDate DESC
                         LIMIT 1""", (clan.name,))
 
-    tuples= cursor.fetchall()
-    if len(tuples) !=  1:
+    tuples = cursor.fetchall()
+    if len(tuples) != 1:
         return None
     
     metric_names = tuples[0][1].split(",")
@@ -205,8 +216,9 @@ def find_clan_metrics(clan):
 
     return result
 
-def find_clan_leaderboard(metric_name, sort_desc = True):
-    conn = sqlite3.connect(ClotConfig.database_location)
+
+def find_clan_leaderboard(metric_name, sort_desc=True):
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
     cursor.execute("""SELECT group_concat(ClanName, "__!!__"), group_concat(Value), datetime((strftime('%s', CreatedDate) / 7200) * 7200, 'unixepoch') AS createdTime
                          FROM ClanLeaderboard 
@@ -215,9 +227,9 @@ def find_clan_leaderboard(metric_name, sort_desc = True):
                          ORDER BY createdTime DESC
                          LIMIT 1""", (metric_name,))
 
-    tuples= cursor.fetchall()
-    if len(tuples) !=  1:
-        return None
+    tuples = cursor.fetchall()
+    if len(tuples) != 1:
+        return []
     
     clans = tuples[0][0].split("__!!__")
     metric_values = tuples[0][1].split(",")

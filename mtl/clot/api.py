@@ -2,8 +2,8 @@ from flask import abort, jsonify, make_response, request, Blueprint
 import sqlite3
 
 from mtl.clot.lot import LOTContainer
-from mtl.ladder.config import ClotConfig
-from mtl.ladder.utilities.DAL import find_recent_unexpired_games
+from mtl.ladder.config import clot_config
+from mtl.ladder.utilities.dal import find_recent_unexpired_games
 
 
 api = Blueprint('api', __name__)
@@ -42,7 +42,7 @@ def get_player(player_id):
 
 @api.route('/api/v1.0/games/', methods=['GET'])
 def get_games():
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     container = LOTContainer()
     games = []
     if 'topk' in request.args and request.args['topk'].isdigit():

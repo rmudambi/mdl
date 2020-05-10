@@ -6,6 +6,7 @@ logging.basicConfig(level=logging.INFO)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("oauth2client").setLevel(logging.WARNING)
 
+
 def get_logger():
     logger = logging.getLogger(__name__)
 

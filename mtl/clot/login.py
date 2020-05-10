@@ -1,8 +1,8 @@
-﻿from flask import Blueprint, abort, redirect, render_template, request, session
+﻿from flask import Blueprint, abort, redirect, request, session
 from jinja2 import TemplateNotFound
 
 from mtl.ladder.utilities.api import validate_token
-from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.ladder.config import clot_config
 
 
 login_page = Blueprint('login_page', __name__, template_folder='templates', static_folder="/static")
@@ -16,15 +16,15 @@ def show():
 
         # If routed from home page.
         if 'clotpass' not in request.args:
-            redirect_url = "http://warlight.net/CLOT/Auth?p={0}&state={1}".format(ClotConfig.profile_id, state)
+            redirect_url = "http://warlight.net/CLOT/Auth?p={0}&state={1}".format(clot_config.PROFILE_ID, state)
             return redirect(redirect_url)
 
         # If routed from WL
         player_token = int(request.args.get('token'))
         clotpass = request.args.get('clotpass')
 
-        apiret = validate_token(ClotConfig.email, ClotConfig.token, player_token)
-        if clotpass == apiret['clotpass']:
+        api_response = validate_token(clot_config.EMAIL, clot_config.TOKEN, player_token)
+        if clotpass == api_response['clotpass']:
             session['authenticatedtoken'] = player_token
         
         return redirect("/" + state)

@@ -1,10 +1,10 @@
 from flask import render_template, Blueprint
 
 from mtl.clot.lot import LOTContainer
-from mtl.ladder.entities.Clan import Clan
-from mtl.ladder.utilities.metricleaderboard import GAME_COUNT, PERCENTAGE, WINS, LEADERBOARD_METRICS as METRICS
-from mtl.ladder.utilities.StatQueries import (find_metric_leaderboard, find_player_leaderboard_by_clan,
-                                              leaderboard_metadata)
+from mtl.ladder.entities.clan import Clan
+from mtl.ladder.utilities.metric_leaderboard import GAME_COUNT, PERCENTAGE, WINS, LEADERBOARD_METRICS as METRICS
+from mtl.ladder.utilities.stat_queries import (find_metric_leaderboard, find_player_leaderboard_by_clan,
+                                               leaderboard_metadata)
 
 
 leaderboard_page = Blueprint('leaderboard_page', __name__, template_folder='templates', static_folder="/static")

@@ -5,8 +5,8 @@ from jinja2 import TemplateNotFound
 import sqlite3
 
 from mtl.clot.lot import LOTContainer
-from mtl.ladder.config.ClotConfig import ClotConfig
-from mtl.ladder.utilities.DAL import find_player, insert_player, update_player
+from mtl.ladder.config import clot_config
+from mtl.ladder.utilities.dal import find_player, insert_player, update_player
 from mtl.ladder.utilities.api import validate_token
 
 
@@ -23,7 +23,7 @@ def show():
         container = LOTContainer()
         if 'authenticatedtoken' in session:
             invite_token = session['authenticatedtoken']
-            conn = sqlite3.connect(ClotConfig.database_location)  # or use :memory: to put it in RAM
+            conn = sqlite3.connect(clot_config.DATABASE_LOCATION)  # or use :memory: to put it in RAM
             current_player = find_player(conn, invite_token)
 
             # Check if this invite token is new to us
@@ -32,7 +32,7 @@ def show():
                 if invite_token in BLACKLISTED_PLAYERS:
                     return 'The supplied invite token is invalid.  You have been banned from this ladder.'
 
-                templates = list(ClotConfig.template_names.keys())
+                templates = list(clot_config.TEMPLATE_NAMES.keys())
                 template_counter = 0
                 apiret = {}
                 while template_counter < len(templates):
@@ -41,7 +41,7 @@ def show():
 
                     # Call the warlight API to get the name and verify that the invite token is correct.
                     # Can only check for 15 templates at a time(API restriction).
-                    apiret = validate_token(ClotConfig.email, ClotConfig.token, invite_token, template_ids)
+                    apiret = validate_token(clot_config.EMAIL, clot_config.TOKEN, invite_token, template_ids)
 
                     if ("tokenIsValid" not in str(apiret)) or ("CannotUseTemplate" in str(apiret)):
                         del apiret["clotpass"]
@@ -72,15 +72,15 @@ def show():
                     # Add one since rank = index + 1
                     current_player.rank = player_rank[0] + 1
 
-        sorted_template_list = sorted(ClotConfig.template_names, key=lambda k: ClotConfig.template_names[k])
-        sorted_retired_template_list = sorted(ClotConfig.retired_template_names,
-                                              key=lambda k: ClotConfig.retired_template_names[k])
+        sorted_template_list = sorted(clot_config.TEMPLATE_NAMES, key=lambda k: clot_config.TEMPLATE_NAMES[k])
+        sorted_retired_template_list = sorted(clot_config.RETIRED_TEMPLATE_NAMES,
+                                              key=lambda k: clot_config.RETIRED_TEMPLATE_NAMES[k])
         return render_template(
             'home.html',
             currentPlayer=current_player,
             container=container,
-            templates=ClotConfig.template_names,
-            retired_templates=ClotConfig.retired_template_names,
+            templates=clot_config.TEMPLATE_NAMES,
+            retired_templates=clot_config.RETIRED_TEMPLATE_NAMES,
             sorted_template_list=sorted_template_list,
             retired_template_list=sorted_retired_template_list
         )

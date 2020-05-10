@@ -1,5 +1,5 @@
-from mtl.ladder.config.ClotConfig import ClotConfig
-from mtl.ladder.utilities.api import *
+from mtl.ladder.config import clot_config
+from mtl.ladder.utilities.api import grantTrophy
 
 buns = "8039234532"
 mod = "2214950915"
@@ -10,4 +10,4 @@ rufus = "2979814301"
 nomercy = "9859154536"
 fsg = "3388515225"
 
-response = grantTrophy(ClotConfig.email, ClotConfig.token, fsg)
+response = grantTrophy(clot_config.EMAIL, clot_config.TOKEN, fsg)

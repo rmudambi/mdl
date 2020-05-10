@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, abort, session, request, redirect
 from jinja2 import TemplateNotFound
-from mtl.ladder.utilities.DAL import *
+from mtl.ladder.utilities.dal import *
 from mtl.clot.lot import LOTContainer
 
 
@@ -11,6 +11,6 @@ report_page = Blueprint('report_page', __name__,
 def show():
     container = LOTContainer()
 
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     players = get_report(conn)
     return render_template('report.html', players = players, container = container)

@@ -28,12 +28,8 @@ class Game:
             self.template = props.get("Template")
 
     def serialize(self, players):
-        serialized_game = {}
-        serialized_game['game_id'] = self.game_id
-        serialized_game['created_date'] = self.created_date
-        serialized_game['finish_date'] = self.finish_date
-        serialized_game['template'] = self.template
-        serialized_game['players'] = players
+        serialized_game = {'game_id': self.game_id, 'created_date': self.created_date, 'finish_date': self.finish_date,
+                           'template': self.template, 'players': players}
         if self.winner is not None:
             serialized_game['winner_id'] = self.winner
         if self.is_game_deleted:

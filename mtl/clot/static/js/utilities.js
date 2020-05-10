@@ -335,7 +335,7 @@ $(document).ready(function(){
                     game_ids.push(Number(g_id));
                 }
             });
-            window.location = '/updatenotablegames?gameIds=' + game_ids.join(",");
+            window.location = '/update-notable-games?gameIds=' + game_ids.join(",");
         }
     });
     

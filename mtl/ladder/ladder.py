@@ -1,5 +1,5 @@
-from time import sleep, clock
-import datetime
+from time import clock, sleep
+
 from mtl.ladder.scheduler.scheduler import Scheduler
 from mtl.ladder.utilities.clan_league_logging import get_logger
 

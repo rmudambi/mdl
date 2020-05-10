@@ -1,23 +1,23 @@
-﻿from flask import Blueprint, render_template, abort, session, request, redirect
-from jinja2 import TemplateNotFound, filters
-from mtl.clot.lot import LOTContainer
-from mtl.ladder.utilities.DAL import find_player, find_all_games, find_vetoes, find_history_records, find_notable_games, find_game
+﻿from flask import redirect, render_template, request, session, Blueprint
 import sqlite3
-from mtl.ladder.config.ClotConfig import ClotConfig
-from datetime import datetime
+
+from mtl.clot.lot import LOTContainer
+from mtl.ladder.config import clot_config
+from mtl.ladder.utilities.dal import (find_all_games, find_game, find_history_records, find_notable_games, find_player,
+                                      find_vetoes)
 
 
-view_player_page = Blueprint('view_player_page', __name__,
-                        template_folder='templates', static_folder="/static")
+view_player_page = Blueprint('view_player_page', __name__, template_folder='templates', static_folder="/static")
 
-#This page follows the instructions at http://wiki.warlight.net/index.php/CLOT_Authentication
+
+# This page follows the instructions at http://wiki.warlight.net/index.php/CLOT_Authentication
 @view_player_page.route('/player')
 def show():
     try:
         player_id = int(request.args.get('playerId'))
     except:
         redirect("/")
-    conn = sqlite3.connect(ClotConfig.database_location) # or use :memory: to put it in RAM
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION) # or use :memory: to put it in RAM
     player = find_player(conn, player_id)
     games = find_all_games(conn, player_id)
     history = find_history_records(conn, player_id=player_id)
@@ -49,24 +49,24 @@ def show():
     current_vetoes = {}
     notable_games = []
     current_player_notable_games = []
-    templates = ClotConfig.template_names
-    retired_templates = ClotConfig.retired_template_names
+    templates = clot_config.TEMPLATE_NAMES
+    retired_templates = clot_config.RETIRED_TEMPLATE_NAMES
 
     if 'authenticatedtoken' in session:
         inviteToken = session['authenticatedtoken']
         currentPlayer = find_player(conn, (inviteToken))
-        for veto in find_vetoes(conn, currentPlayer.player_id, ClotConfig.template_veto_count):
+        for veto in find_vetoes(conn, currentPlayer.player_id, clot_config.TEMPLATE_VETO_MAX):
             current_vetoes[veto[1]] = True
         
         # Find the logged-in player's notable games(needed for the settings drop-down)
-        for notable_game_tuple in find_notable_games(conn, currentPlayer.player_id, ClotConfig.notable_game_count):
+        for notable_game_tuple in find_notable_games(conn, currentPlayer.player_id, clot_config.NOTABLE_GAME_MAX):
             current_player_notable_games.append(find_game(conn, notable_game_tuple[1]))
 
     if currentPlayer is not None and player.player_id == currentPlayer.player_id:
         notable_games = current_player_notable_games
     else:
         # Find the page player's notable games(needed for the notable games table)
-        for notable_game_tuple in find_notable_games(conn, player_id, ClotConfig.notable_game_count):
+        for notable_game_tuple in find_notable_games(conn, player_id, clot_config.NOTABLE_GAME_MAX):
             notable_game = find_game(conn, notable_game_tuple[1])
             if notable_game is not None:
                 notable_games.append(notable_game)
@@ -85,7 +85,7 @@ def show():
     #template_winrates.sort(key=lambda x: x["winrate"], reverse=True)
     #template_winrates = template_winrates[:20]
 
-    return render_template('viewplayer.html', player = player, games= sorted_games, currentPlayer=currentPlayer, container = container, 
+    return render_template('view-player.html', player = player, games= sorted_games, currentPlayer=currentPlayer, container = container,
                            templates = templates, retired_templates = retired_templates, current_vetoes = current_vetoes, history = history, 
                            template_winrates = template_winrates, players_ranked_nearby = players_ranked_nearby, notable_games = notable_games,
                            current_player_notable_games = current_player_notable_games)

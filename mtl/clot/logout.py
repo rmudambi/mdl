@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, redirect, session
+from flask import abort, redirect, session, Blueprint
 from jinja2 import TemplateNotFound
 
 

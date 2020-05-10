@@ -2,16 +2,11 @@ from datetime import datetime, timedelta
 import sqlite3
 from typing import List, Tuple
 
-from mtl.ladder.utilities.DAL import delete_leaderboard, insert_leaderboard, insert_stat_history_record
+from mtl.ladder.utilities.dal import delete_leaderboard, insert_leaderboard, insert_stat_history_record
 from mtl.ladder.utilities.clan_league_logging import get_logger
-from mtl.ladder.config.ClotConfig import ClotConfig
-from mtl.ladder.utilities.metricleaderboard import (MetricLeaderboardMetadata,
-                                         DAYS,
-                                         GAME_COUNT,
-                                         LEADERBOARD_METRICS as METRICS,
-                                         PERCENTAGE,
-                                         RATING,
-                                         WINS, )
+from mtl.ladder.config import clot_config
+from mtl.ladder.utilities.metric_leaderboard import (MetricLeaderboardMetadata, DAYS, GAME_COUNT,
+                                                     LEADERBOARD_METRICS as METRICS, PERCENTAGE, RATING, WINS)
 
 logger = get_logger()
 
@@ -22,20 +17,16 @@ mdl_stat_finished_games_per_day = "Finished Games Per Day"
 def update_mdl_stats(conn):
     fin_date = datetime.now()
     cursor = conn.cursor()
-    cursor.execute(
-        """SELECT datetime((strftime('%s', f1.FinishDate) / 24/3600 + 1) * 3600 *24, 'unixepoch')
-            as cTime1, count(*) AS gc
-        FROM Games f1 
-        WHERE cTime1 < ?""", (fin_date,))
+    cursor.execute("SELECT datetime((strftime('%s', f1.FinishDate) / 24/3600 + 1) * 3600 *24, 'unixepoch') AS cTime1, "
+                   "count(*) AS gc FROM Games f1 WHERE cTime1 < ?", (fin_date,))
 
     tg_tuples = cursor.fetchall()
     tuple_update_time = datetime.strptime(tg_tuples[0][0], '%Y-%m-%d %H:%M:%S')
     insert_stat_history_record(conn, (tuple_update_time, mdl_stat_finished_games, tg_tuples[0][1]))
 
     prev_date = fin_date + timedelta(days=-1)
-    cursor.execute("""SELECT datetime((strftime('%s', f1.FinishDate) / 24/3600 + 1) * 3600 *24, 'unixepoch') as cTime1, count(*) AS gc
-                    FROM Games f1 
-                    WHERE cTime1 < ? AND cTime1 > ? """, (fin_date, prev_date))
+    cursor.execute("SELECT datetime((strftime('%s', f1.FinishDate) / 24/3600 + 1) * 3600 *24, 'unixepoch') AS cTime1, "
+                   "count(*) AS gc FROM Games f1 WHERE cTime1 < ? AND cTime1 > ? ", (fin_date, prev_date))
 
     tg_tuples = cursor.fetchall()
     tuple_update_time = datetime.strptime(tg_tuples[0][0], '%Y-%m-%d %H:%M:%S')
@@ -53,14 +44,14 @@ def find_all_games(conn):
 
 
 def get_all_games_query():
-    return """SELECT * FROM (SELECT TeamA, sum(gc) AS gc  FROM (SELECT TeamA, count(*) as gc FROM Games 
+    return ("""SELECT * FROM (SELECT TeamA, sum(gc) AS gc  FROM (SELECT TeamA, count(*) as gc FROM Games 
                            WHERE FinishDate IS NOT NULL 
                            GROUP BY TeamA 
                            UNION ALL
                            SELECT TeamB, count(*) as gc FROM Games 
                            WHERE FinishDate IS NOT NULL
                            GROUP BY TeamB) GROUP BY TeamA
-                           ORDER BY gc DESC) WHERE gc >= 20"""
+                           ORDER BY gc DESC) WHERE gc >= 20""")
 
 
 def get_games_won_query():
@@ -100,7 +91,8 @@ def find_games_won(conn):
 def find_best_rating(conn) -> List[Tuple[int, int]]:
     """Find best rating"""
     cursor = conn.cursor()
-    cursor.execute('SELECT PlayerId, BestDisplayedRating FROM Players WHERE BestDisplayedRating IS NOT NULL ORDER BY BestRating DESC')
+    cursor.execute('SELECT PlayerId, BestDisplayedRating FROM Players WHERE BestDisplayedRating IS NOT NULL '
+                   'ORDER BY BestRating DESC')
     player_tuples = cursor.fetchall()
     player_tuples = sorted(player_tuples, key=lambda x: x[1], reverse=True)
     return player_tuples
@@ -328,7 +320,8 @@ leaderboard_metadata: List[MetricLeaderboardMetadata] = [
 
 
 def update_leaderboards() -> None:
-    conn = sqlite3.connect(ClotConfig.database_location)
+    logger.info("Updating leaderboards")
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     leaderboard_creation_time = datetime.now()
 
     # Update all leaderboards
@@ -346,18 +339,19 @@ def update_leaderboards() -> None:
 
 
 def find_metric_leaderboard(metric_name):
-    conn = sqlite3.connect(ClotConfig.database_location)
+    query = (f'SELECT group_concat(PlayerId), group_concat(Value),'
+             f' datetime((strftime("%s", CreatedDate) / 7200) * 7200, "unixepoch") AS createdTime '
+             f'FROM Leaderboard WHERE Metric="{metric_name}" '
+             f'GROUP BY createdTime '
+             f'ORDER BY createdTime DESC LIMIT 1')
+
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
-    cursor.execute("""SELECT group_concat(PlayerId), group_concat(Value), datetime((strftime('%s', CreatedDate) / 7200) * 7200, 'unixepoch') AS createdTime
-                         from mtl.clot.leaderboard 
-                         WHERE Metric=?
-                         GROUP BY createdTime
-                         ORDER BY createdTime DESC
-                         LIMIT 1""", (metric_name,))
+    cursor.execute(query)
 
     tuples = cursor.fetchall()
     if len(tuples) != 1:
-        return None
+        return []
     
     players = tuples[0][0].split(",")
     metric_values = tuples[0][1].split(",")
@@ -375,10 +369,10 @@ def find_metric_leaderboard(metric_name):
 
 
 def find_player_leaderboard_by_clan(clan, metric_name):
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
     cursor.execute("""SELECT P.PlayerId, L.Value
-                        from mtl.clot.leaderboard L 
+                        from Leaderboard L 
                         JOIN Players P
                         ON L.PlayerId = P.PlayerId
                         WHERE P.Clan = ? AND L.Metric = ?""", (clan.name, metric_name))
@@ -388,7 +382,7 @@ def find_player_leaderboard_by_clan(clan, metric_name):
 
 
 def find_vetoes_per_template():
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
     cursor.execute("""SELECT * FROM (
                         SELECT TemplateId, count(*) AS c
@@ -404,7 +398,7 @@ def find_vetoes_per_template():
 
 
 def find_mdl_stats_by_metric(metric_name):
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
     cursor.execute("""SELECT RecordedDate,Value 
                         FROM StatHistory
@@ -416,7 +410,7 @@ def find_mdl_stats_by_metric(metric_name):
 
 
 def find_number_of_active_players():
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
     cursor.execute("""SELECT count(*)
                         FROM Players
@@ -427,7 +421,7 @@ def find_number_of_active_players():
 
 
 def find_total_number_of_players():
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
     cursor.execute("""SELECT count(*)
                         FROM Players""")
@@ -437,7 +431,7 @@ def find_total_number_of_players():
 
 
 def find_number_of_ongoing_games():
-    conn = sqlite3.connect(ClotConfig.database_location)
+    conn = sqlite3.connect(clot_config.DATABASE_LOCATION)
     cursor = conn.cursor()
     cursor.execute("""SELECT count(*)
                         FROM Games

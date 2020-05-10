@@ -1,6 +1,6 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from mtl.ladder.config.ClotConfig import ClotConfig
+from mtl.ladder.config import clot_config
 import logging
 
 
@@ -26,5 +26,5 @@ def backup_database():
     drive = GoogleDrive(gauth)
 
     file5 = drive.CreateFile({'title': 'MDL_database.db'})
-    file5.SetContentFile(ClotConfig.database_location)
+    file5.SetContentFile(clot_config.DATABASE_LOCATION)
     file5.Upload() # Upload the file.
