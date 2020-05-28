@@ -281,7 +281,7 @@ class Scheduler:
                 response = validate_token(clot_config.EMAIL, clot_config.TOKEN, player.player_id)
                 if 'blacklisted' in response:
                     player.update_status_on_leave(False)
-                elif 'onVacationUntil' in response:
+                elif 'onVacationUntil' in response and player.is_joined:
                     player.update_status_on_leave(True)
                 else:
                     # Update name and clan changes for player as well.
