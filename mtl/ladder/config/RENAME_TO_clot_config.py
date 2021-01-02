@@ -62,7 +62,7 @@ template_names = {
     940646: "Numenor",
     980613: "Phobia",
     940641: "Post-melt Antarctica",
-    940492: "Strat ME",
+    1360460: "Strat ME",
     940490: "Strategic Greece",
     940487: "The World of Warhammer",
     940486: "Treasure Map",
